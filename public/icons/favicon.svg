@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffc844"/>
+      <stop offset="1" stop-color="#e07800"/>
+    </linearGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd978"/>
+      <stop offset="1" stop-color="#f6a821"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#g)"/>
+  <!-- půllitr -->
+  <g transform="translate(96 88)">
+    <path d="M226 110h30a46 46 0 0 1 0 92h-30" fill="none" stroke="#1d1206" stroke-width="26" stroke-linecap="round"/>
+    <path d="M58 54v232a30 30 0 0 0 30 30h118a30 30 0 0 0 30-30V54Z" fill="#1d1206"/>
+    <path d="M78 110v170a16 16 0 0 0 16 16h106a16 16 0 0 0 16-16V110Z" fill="url(#b)"/>
+    <path d="M100 126v150M126 126v150M152 126v150M178 126v150" stroke="#1d1206" stroke-opacity=".18" stroke-width="10" stroke-linecap="round"/>
+    <!-- pěna -->
+    <path d="M44 72a34 34 0 0 1 56-24 34 34 0 0 1 52-14 34 34 0 0 1 56 8 30 30 0 0 1 44 26 26 26 0 0 1-22 42H66a30 30 0 0 1-22-38Z" fill="#fbf4e9"/>
+  </g>
+</svg>

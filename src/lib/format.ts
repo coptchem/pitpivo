@@ -1,0 +1,15 @@
+export const n2 = (v: number, d: number) => v.toLocaleString('cs-CZ', { minimumFractionDigits: d, maximumFractionDigits: d });
+export const vol = (ml: number) => (ml >= 100 ? n2(ml / 1000, 1) + ' l' : Math.round(ml / 10) + ' cl');
+export const pct1 = (a: number) => n2(a * 100, 1) + ' %';
+export const pct0 = (a: number) => (Math.round(a * 1000) % 10 ? n2(a * 100, 1) : n2(a * 100, 0)) + ' %';
+export const fmtDur = (ms: number) => { const m = Math.max(0, Math.round(ms / 6e4)), h = Math.floor(m / 60); return h ? `${h} h ${m % 60} min` : `${m} min`; };
+export const pl = (n: number, a: string, b: string, c: string) => (n === 1 ? a : n >= 2 && n <= 4 ? b : c);
+export const word = (n: number) => pl(n, 'pivo', 'piva', 'piv');
+export const initials = (n: string) => (n || '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+export const hhmm = (ts: number) => { const d = new Date(ts); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+export const slug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z]/g, '').toUpperCase();
+export const normCode = (c: string) => (c || '').trim().toUpperCase().replace(/\s+/g, '').replace(/^.*\//, '');
+export const rel = (ts: number, now: number) => { const s = Math.round((now - ts) / 1000); if (s < 10) return 'teď'; if (s < 60) return `před ${s} s`; if (s < 3600) return `před ${Math.floor(s / 60)} min`; return hhmm(ts); };
+export const pctW = (c: number, g: number) => Math.min(100, Math.round(c / g * 100)) + '%';
+export const avatarOf = (uid: string, list: string[]) => { let h = 0; for (let i = 0; i < uid.length; i++) h = (h * 31 + uid.charCodeAt(i)) >>> 0; return list[h % list.length]; };
+export const APP_HOST = 'pitpivo.cz';

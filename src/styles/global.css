@@ -1,0 +1,89 @@
+/* Pit Pivo — design tokens 1:1 podle README (tmavý výchozí, světlý přes data-theme) */
+:root,
+[data-theme="dark"] {
+  --bg: #14100c;
+  --card: #1f1811;
+  --card-2: #2a2017;
+  --sheet: #1c150f;
+  --glass: rgba(20, 16, 12, .84);
+  --line: rgba(246, 168, 33, .32);
+  --line-soft: rgba(255, 236, 210, .09);
+  --text: #f8efe4;
+  --muted: #b4a491;
+  --amber: #f6a821;
+  --amber-hi: #ffc844;
+  --amber-lo: #e07800;
+  --amber-text: #ffbd3a;
+  --amber-tint: rgba(246, 168, 33, .14);
+  --on-amber: #1d1206;
+  --glow: rgba(246, 168, 33, .28);
+  --danger: #ff7a7a;
+  --danger-tint: rgba(255, 90, 90, .13);
+  --danger-line: rgba(255, 90, 90, .35);
+  --ok: #3ddc84;
+  --ok-tint: rgba(61, 220, 132, .13);
+  --bar: rgba(246, 168, 33, .28);
+  --font-body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  color-scheme: dark;
+}
+[data-theme="light"] {
+  --bg: #fbf4e9;
+  --card: #ffffff;
+  --card-2: #f6ecdd;
+  --sheet: #fffaf3;
+  --glass: rgba(251, 244, 233, .86);
+  --line: rgba(205, 130, 10, .32);
+  --line-soft: rgba(60, 35, 10, .09);
+  --text: #2b1b0c;
+  --muted: #7c6650;
+  --amber: #f6a821;
+  --amber-hi: #ffc844;
+  --amber-lo: #e07800;
+  --amber-text: #a35400;
+  --amber-tint: rgba(246, 168, 33, .16);
+  --on-amber: #1d1206;
+  --glow: rgba(224, 120, 0, .25);
+  --danger: #c93434;
+  --danger-tint: rgba(214, 60, 60, .09);
+  --danger-line: rgba(214, 60, 60, .3);
+  --ok: #1b8a4a;
+  --ok-tint: rgba(31, 157, 85, .12);
+  --bar: rgba(205, 130, 10, .25);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+#root { min-height: 100vh; }
+a { color: var(--amber); }
+a:hover { color: var(--amber-hi); }
+button { font: inherit; color: inherit; }
+input, button, select, textarea { font-family: inherit; }
+input:focus-visible, button:focus-visible { outline: 2px solid #f6a821; outline-offset: 2px; }
+input::placeholder { color: var(--muted); opacity: .7; }
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+.pretty { text-wrap: pretty; }
+.noscroll { scrollbar-width: none; }
+.noscroll::-webkit-scrollbar { display: none; }
+
+.cta:active { transform: scale(.975); }
+
+@keyframes pp-pop { 0% { transform: scale(.6); opacity: .2 } 100% { transform: scale(1); opacity: 1 } }
+@keyframes pp-float { 0% { transform: translateY(6px); opacity: 0 } 20% { opacity: 1 } 100% { transform: translateY(-46px); opacity: 0 } }
+@keyframes pp-pulse { 0%, 100% { opacity: 1 } 50% { opacity: .25 } }
+@keyframes pp-toast { from { transform: translateY(-130%); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes pp-bubble { from { transform: translateY(-10px) scale(.96); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes pp-spin { to { transform: rotate(360deg) } }

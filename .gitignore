@@ -1,0 +1,28 @@
+node_modules
+dist
+dev-dist
+.firebase
+*.log
+.env
+.env.local
+functions/node_modules
+functions/lib
+.DS_Store
+
+# --- secrets & local ops notes (never commit) ---
+.env.*.local
+*.p8
+*.pem
+*.key
+*-firebase-adminsdk-*.json
+*service-account*.json
+pit-pivo-*.json
+DEPLOY.private.md
+*.tsbuildinfo
+functions/src/shared
+firebase-debug*.log
+
+ftp.txt
+
+# temporary admin helper scripts
+functions/scripts/_*.mjs

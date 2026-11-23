@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isMe(uid) { return signedIn() && request.auth.uid == uid; }
+    function validName(n) { return n is string && n.size() >= 1 && n.size() <= 24; }
+    function nowMs() { return request.time.toMillis(); }
+
+    // Veřejný profil = přezdívka + agregát pro žebříček. Čtou všichni přihlášení.
+    // Klient smí zapsat jen přezdívku (a při založení čas). `stats` počítá výhradně Cloud Function.
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create: if isMe(uid)
+        && request.resource.data.keys().hasOnly(['name', 'createdAt'])
+        && validName(request.resource.data.name)
+        && request.resource.data.createdAt is number
+        && request.resource.data.createdAt > nowMs() - 600000
+        && request.resource.data.createdAt < nowMs() + 600000;
+      allow update: if isMe(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
+        && validName(request.resource.data.name);
+      allow delete: if false; // přes Cloud Function deleteAccount
+
+      // Soukromé údaje (váha, pohlaví, metabolismus) — vidí jen majitel.
+      match /private/{doc} {
+        allow read: if isMe(uid);
+        allow create, update: if isMe(uid) && doc == 'profile'
+          && request.resource.data.keys().hasOnly(['kg', 'sex', 'met', 'invitedBy'])
+          && request.resource.data.kg is number && request.resource.data.kg >= 35 && request.resource.data.kg <= 250
+          && request.resource.data.sex in ['m', 'f']
+          && request.resource.data.met in ['fast', 'normal', 'slow']
+          && request.resource.data.get('invitedBy', null) == (resource == null ? null : resource.data.get('invitedBy', null));
+        allow delete: if false;
+      }
+
+      match /drinks/{id} {
+        allow read: if isMe(uid);
+        allow create: if isMe(uid)
+          && request.resource.data.keys().hasOnly(['cat', 'v', 'ml', 'ts'])
+          && request.resource.data.cat in ['big', 'small', 'wine', 'shot', 'nealko']
+          && request.resource.data.v is string && request.resource.data.v.size() <= 16
+          && (request.resource.data.ml == null || (request.resource.data.ml is number && request.resource.data.ml >= 10 && request.resource.data.ml <= 1000))
+          && request.resource.data.ts is number
+          && request.resource.data.ts <= nowMs() + 60000
+          && request.resource.data.ts >= nowMs() - 36 * 3600000;
+        allow delete: if isMe(uid);
+        allow update: if false;
+      }
+    }
+
+    // Putyky mění jen Cloud Functions. Hlavní lokál (pubs/main) čte každý, ostatní jen členové.
+    match /pubs/{pubId} {
+      allow read: if signedIn() && (pubId == 'main' || request.auth.uid in resource.data.memberIds);
+      allow write: if false;
+    }
+
+    // Pozvánky: zakládá, hledá a přebírá jen Cloud Function (s limitem pokusů). Autor vidí seznam svých pozvánek.
+    match /invites/{code} {
+      allow get: if false;
+      allow list: if signedIn() && resource.data.createdBy == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Feed „Kdo právě nasává“ píše jen Cloud Function. Veřejné události mají aud == 'all',
+    // události z putyk vidí jen jejich členové.
+    match /events/{id} {
+      allow read: if signedIn() && (resource.data.get('aud', '') == 'all' || request.auth.uid in resource.data.get('members', []));
+      allow write: if false;
+    }
+
+    // Vše ostatní (config, ratelimits, …) je pro klienty zavřené.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,101 @@
+name: Deploy (FTP pitpivo.cz + Firebase)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  FIREBASE_PROJECT: pit-pivo
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            functions/package-lock.json
+
+      - name: Install (web)
+        run: npm ci
+
+      - name: Install (functions)
+        run: npm ci --prefix functions
+
+      # Public Firebase web config lives in .env.production (committed); no VITE_ secrets needed.
+      - name: Typecheck + build web
+        run: npm run build
+
+      - name: Build functions
+        run: npm run build --prefix functions
+
+      - name: Check FTP secrets
+        env:
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          if [ -z "$FTP_PASSWORD" ]; then echo "::error::Missing GitHub secrets FTP_USERNAME / FTP_PASSWORD"; exit 1; fi
+
+      # Uploads dist/ to the pitpivo.cz web root on svethostingu.cz (multihosting FTP root: /cz/<domain>/www).
+      # lftp over explicit FTPS (the server needs TLS session reuse on the data channel, which lftp supports).
+      # Only files inside that folder are touched; nothing is deleted, other folders on the account are left alone.
+      - name: Deploy web to pitpivo.cz (FTP)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER || 'vz206.svethostingu.cz' }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          LFTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR || '/' }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp >/dev/null
+          cat > "$RUNNER_TEMP/lftp.cmd" <<EOF
+          # The hosting's FTP server uses a self-signed *.svethostingu.cz certificate (valid to 2036); we pin it
+          # instead of disabling verification, so a man-in-the-middle cannot capture the FTP password.
+          set ssl:verify-certificate yes
+          set ssl:ca-file $GITHUB_WORKSPACE/.github/ftp-server-cert.pem
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ftp:passive-mode true
+          set net:max-retries 3
+          set net:timeout 60
+          set cmd:fail-exit yes
+          open --env-password -u "$FTP_USERNAME" "$FTP_SERVER"
+          # Safety: target folder must already contain the site (index.html + .htaccess); never upload elsewhere.
+          cls -1 ${FTP_SERVER_DIR}index.html
+          cls -1 ${FTP_SERVER_DIR}.htaccess
+          mirror --reverse --verbose=1 --parallel=4 --no-perms --only-newer --ignore-time ./dist/ $FTP_SERVER_DIR
+          put -O $FTP_SERVER_DIR ./dist/index.html
+          quit
+          EOF
+          lftp -f "$RUNNER_TEMP/lftp.cmd"
+
+      - name: Write service account key
+        env:
+          SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$SA_JSON" ]; then echo "::error::Missing GitHub secret FIREBASE_SERVICE_ACCOUNT"; exit 1; fi
+          printf '%s' "$SA_JSON" > "${{ runner.temp }}/sa.json"
+
+      # Firestore rules/indexes + a mirror of the web on https://pit-pivo.web.app
+      - name: Deploy Firestore rules/indexes + Firebase Hosting mirror
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: npx firebase-tools@15.37.0 deploy --only hosting,firestore --project "$FIREBASE_PROJECT" --non-interactive --force
+
+      # Cloud Functions need the Blaze plan and the ADMIN_PASS secret; until then this step fails but the workflow passes.
+      - name: Deploy Cloud Functions
+        continue-on-error: true
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: npx firebase-tools@15.37.0 deploy --only functions --project "$FIREBASE_PROJECT" --non-interactive --force

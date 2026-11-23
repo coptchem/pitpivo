@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="_ds/modernist-abf47f74-eb81-4e66-bb95-6ec4c8a978be/styles.css">
+<script src="_ds/modernist-abf47f74-eb81-4e66-bb95-6ec4c8a978be/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#14100c}
+a{color:#f6a821}a:hover{color:#ffc844}
+[data-theme="dark"]{--bg:#14100c;--card:#1f1811;--card-2:#2a2017;--sheet:#1c150f;--glass:rgba(20,16,12,.84);--line:rgba(246,168,33,.32);--line-soft:rgba(255,236,210,.09);--text:#f8efe4;--muted:#b4a491;--amber:#f6a821;--amber-hi:#ffc844;--amber-lo:#e07800;--amber-text:#ffbd3a;--amber-tint:rgba(246,168,33,.14);--on-amber:#1d1206;--glow:rgba(246,168,33,.28);--danger:#ff7a7a;--danger-tint:rgba(255,90,90,.13);--danger-line:rgba(255,90,90,.35);--ok:#3ddc84;--ok-tint:rgba(61,220,132,.13);--bar:rgba(246,168,33,.28)}
+[data-theme="light"]{--bg:#fbf4e9;--card:#ffffff;--card-2:#f6ecdd;--sheet:#fffaf3;--glass:rgba(251,244,233,.86);--line:rgba(205,130,10,.32);--line-soft:rgba(60,35,10,.09);--text:#2b1b0c;--muted:#7c6650;--amber:#f6a821;--amber-hi:#ffc844;--amber-lo:#e07800;--amber-text:#a35400;--amber-tint:rgba(246,168,33,.16);--on-amber:#1d1206;--glow:rgba(224,120,0,.25);--danger:#c93434;--danger-tint:rgba(214,60,60,.09);--danger-line:rgba(214,60,60,.3);--ok:#1b8a4a;--ok-tint:rgba(31,157,85,.12);--bar:rgba(205,130,10,.25)}
+input:focus-visible,button:focus-visible{outline:2px solid #f6a821;outline-offset:2px}
+@keyframes pp-pop{0%{transform:scale(.6);opacity:.2}100%{transform:scale(1);opacity:1}}
+@keyframes pp-float{0%{transform:translateY(6px);opacity:0}20%{opacity:1}100%{transform:translateY(-46px);opacity:0}}
+@keyframes pp-pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes pp-toast{from{transform:translateY(-130%);opacity:0}to{transform:none;opacity:1}}
+@keyframes pp-bubble{from{transform:translateY(-10px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--font-body)">
+{{ toastEl }}
+<sc-if value="{{ notReady }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="00 Vítej" style="max-width:480px;margin:0 auto;min-height:100vh;box-sizing:border-box;display:flex;flex-direction:column;gap:18px;padding:28px 20px 32px">
+  <div style="display:flex;justify-content:flex-end">
+    <button onClick="{{ toggleTheme }}" aria-label="Přepnout motiv" style="width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--line-soft);color:var(--text);cursor:pointer">
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg></sc-if>
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></sc-if>
+    </button>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+    <span style="width:84px;height:84px;border-radius:26px;display:grid;place-items:center;font-size:46px;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));box-shadow:0 12px 36px var(--glow)">🍺</span>
+    <h1 style="margin:6px 0 0;font-size:34px;font-weight:800;letter-spacing:-.02em">Pit Pivo</h1>
+    <p style="margin:0;font-size:15px;color:var(--muted);text-wrap:pretty;max-width:320px">Počítej piva, měř se s kámošema a sbírej odznaky. Bez registrace, bez hesla.</p>
+  </div>
+  <sc-if value="{{ obIsForm }}" hint-placeholder-val="{{ true }}">
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:16px">
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted)">Jak ti říkaj u pípy?
+        <input value="{{ ob.name }}" onChange="{{ obName }}" maxlength="24" placeholder="třeba Kopec" style="min-height:50px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:18px;font-weight:800">
+      </label>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:12px;font-weight:700;color:var(--muted)">Váha (kvůli promile)</span>
+        <div style="display:grid;grid-template-columns:48px minmax(0,1fr) 48px;gap:8px">
+          <button onClick="{{ obKgDec }}" aria-label="Ubrat" style="min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-weight:800;font-size:22px;cursor:pointer">−</button>
+          <div style="position:relative">
+            <input type="number" inputmode="numeric" min="35" max="250" value="{{ ob.kg }}" onChange="{{ obKg }}" style="width:100%;box-sizing:border-box;min-height:48px;padding:8px 44px 8px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:20px;font-weight:800">
+            <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--muted);pointer-events:none">kg</span>
+          </div>
+          <button onClick="{{ obKgInc }}" aria-label="Přidat" style="min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-weight:800;font-size:22px;cursor:pointer">+</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:12px;font-weight:700;color:var(--muted)">Pohlaví</span>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card-2)">
+          <sc-for list="{{ obSexOpts }}" as="o" hint-placeholder-count="2">
+            <button onClick="{{ o.pick }}" style="min-height:42px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <button onClick="{{ obStart }}" style="min-height:58px;border-radius:18px;border:0;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font:inherit;font-weight:800;font-size:20px;cursor:pointer;box-shadow:0 10px 30px var(--glow);opacity:{{ obStartOpacity }}">Jdu pít 🍻</button>
+    </div>
+    <button onClick="{{ obGoInvite }}" style="min-height:48px;border-radius:16px;background:transparent;border:1.5px solid var(--amber);color:var(--amber-text);font:inherit;font-weight:800;font-size:15px;cursor:pointer">Mám pozvánku od kámoše</button>
+  </sc-if>
+  <sc-if value="{{ obIsInvite }}" hint-placeholder-val="{{ false }}">
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px">
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted)">Kód z pozvánky
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px">
+          <input value="{{ ob.code }}" onChange="{{ obCode }}" placeholder="KOTEL-7F2X" autocapitalize="characters" style="min-height:50px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:18px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;min-width:0">
+          <button onClick="{{ obFind }}" style="min-height:50px;padding:0 18px;border-radius:14px;border:0;background:var(--amber);color:var(--on-amber);font:inherit;font-weight:800;font-size:15px;cursor:pointer">Najít</button>
+        </div>
+      </label>
+      <sc-if value="{{ obHasError }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--danger);font-weight:700">{{ ob.error }}</span></sc-if>
+      <sc-if value="{{ obHasFound }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--amber-tint);border:1px solid var(--amber)">
+          <span style="width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--amber);color:var(--on-amber);font-weight:800;font-size:20px">{{ obFound.initials }}</span>
+          <span style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-weight:800;font-size:18px">{{ obFound.name }}</span>
+            <span style="font-size:13px;color:var(--muted)">{{ obFound.sub }}</span>
+          </span>
+        </div>
+        <button onClick="{{ obClaim }}" style="min-height:56px;border-radius:16px;border:0;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font:inherit;font-weight:800;font-size:18px;cursor:pointer;box-shadow:0 8px 24px var(--glow)">To jsem já 👋</button>
+      </sc-if>
+      <span style="font-size:12px;color:var(--muted)">Pro demo zkus kód KOTEL-7F2X.</span>
+    </div>
+    <button onClick="{{ obGoForm }}" style="min-height:44px;background:transparent;border:0;color:var(--muted);font:inherit;font-weight:700;font-size:14px;cursor:pointer">← Zpět, založím si vlastní</button>
+  </sc-if>
+  <p style="margin:auto 0 0;font-size:12px;color:var(--muted);text-align:center;text-wrap:pretty">Účet si můžeš kdykoli zamknout přes Google nebo Apple, aby ti čárky nezmizely při výměně telefonu.</p>
+</section>
+</sc-if>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column">
+
+<header style="position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg)">
+  <span style="width:44px;height:44px;flex:none;border-radius:14px;display:grid;place-items:center;font-size:24px;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));box-shadow:0 4px 14px var(--glow)">🍺</span>
+  <div style="display:flex;flex-direction:column;gap:3px;margin-right:auto;min-width:0">
+    <span style="font-weight:800;font-size:20px;line-height:1;letter-spacing:-.01em">Pit Pivo</span>
+    <span style="display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:2px 9px;border-radius:99px;background:var(--ok-tint);border:1px solid var(--ok);color:var(--ok);font-size:11px;font-weight:800;white-space:nowrap">{{ liveDot }}<span style="white-space:nowrap">Online · {{ onlineCount }} u pípy</span></span>
+  </div>
+  <button onClick="{{ toggleTheme }}" aria-label="Přepnout motiv" style="width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--line-soft);color:var(--text);cursor:pointer">
+    <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+    </sc-if>
+    <sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+    </sc-if>
+  </button>
+  <button onClick="{{ goProfile }}" style="display:flex;align-items:center;gap:8px;height:40px;padding:0 12px 0 5px;border-radius:99px;background:var(--card);border:1.5px solid var(--amber);color:var(--text);font:inherit;font-weight:800;font-size:14px;cursor:pointer;max-width:140px">
+    <span style="width:30px;height:30px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--amber);color:var(--on-amber);font-size:12px">{{ myInitials }}</span>
+    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ name }}</span>
+  </button>
+</header>
+
+<main style="flex:1;display:flex;flex-direction:column;padding:6px 16px 28px">
+
+<sc-if value="{{ isCount }}" hint-placeholder-val="{{ true }}">
+<section data-screen-label="01 Pípa" style="display:flex;flex-direction:column;gap:14px">
+  {{ quoteEl }}
+  <sc-if value="{{ sessionNoteOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-radius:18px;background:var(--card);border:1.5px solid var(--line)">
+      <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-weight:800;font-size:15px">🔄 Nové kolo běží</span><span style="font-size:12px;color:var(--muted)">{{ sessionSummary }}</span></span>
+      <button onClick="{{ hideSessionNote }}" aria-label="Skrýt" style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:0;background:var(--card-2);color:var(--text);cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2.6;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    </div>
+  </sc-if>
+  <div style="position:relative">
+    <button onClick="{{ add }}" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 16px 20px;border-radius:26px;border:0;background:linear-gradient(180deg,var(--amber-hi) 0%,var(--amber) 50%,var(--amber-lo) 100%);box-shadow:0 14px 40px var(--glow);color:var(--on-amber);font:inherit;cursor:pointer;transition:transform .12s" style-active="transform:scale(.975)">
+      {{ ctaIcon }}
+      <span style="font-weight:800;font-size:38px;line-height:1;letter-spacing:.01em;text-transform:uppercase">{{ ctaLabel }}</span>
+      <span style="font-size:14px;font-weight:600;opacity:.82">{{ ctaSub }}</span>
+    </button>
+  </div>
+  {{ xpFloat }}
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Dát si něco jinýho</span>
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px">
+      <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+        <button onClick="{{ c.open }}" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 2px 9px;border-radius:16px;font:inherit;color:var(--text);cursor:pointer;background:{{ c.bg }};border:1.5px solid {{ c.border }}">
+          {{ c.icon }}
+          <span style="font-weight:800;font-size:13px">{{ c.label }}</span>
+          <span style="font-size:10.5px;color:var(--muted);white-space:nowrap">{{ c.sub }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:6px;min-width:0">
+      <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Dnes vypito</span>
+      <span style="display:flex;align-items:baseline;gap:5px">{{ bigNumber }}<span style="font-weight:800;font-size:15px;color:var(--amber-text)">ks</span></span>
+      <span style="font-size:12px;color:var(--muted)">{{ breakdown }}</span>
+      <sc-if value="{{ hasOther }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:var(--muted)">{{ otherText }}</span></sc-if>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:6px;min-width:0">
+      <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Piv za hodinu / minutu</span>
+      <span style="display:flex;align-items:baseline;gap:5px"><span style="font-weight:800;font-size:34px;line-height:1;letter-spacing:-.02em">{{ tempo.perH }}</span><span style="font-weight:800;font-size:15px;color:var(--amber-text)">piv/h</span></span>
+      <span style="font-size:13px;font-weight:800;color:var(--amber-text)">{{ tempo.perMin }} piv/min</span>
+      <span style="font-size:12px;color:var(--muted)">{{ tempo.since }}</span>
+    </div>
+    <button onClick="{{ goProfile }}" style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;font:inherit;color:inherit;text-align:left;cursor:pointer">
+      <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Odhad promile</span>
+      <span style="display:flex;align-items:baseline;gap:5px"><span style="font-weight:800;font-size:34px;line-height:1;letter-spacing:-.02em">{{ bac.value }}</span><span style="font-weight:800;font-size:16px;color:var(--amber-text)">‰</span></span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);text-decoration:underline dotted;text-underline-offset:3px">{{ bac.profile }} ✏️</span>
+    </button>
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:6px;min-width:0">
+      <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Vystřízlivění za</span>
+      <span style="font-weight:800;font-size:28px;line-height:1.1;letter-spacing:-.02em">{{ bac.sober }}</span>
+      <span style="font-size:12px;color:var(--muted)">{{ bac.soberAt }}</span>
+    </div>
+    <sc-if value="{{ sessionOn }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ openEnd }}" style="grid-column:1 / -1;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;padding:10px;border-radius:16px;background:var(--card);border:1.5px solid var(--line);color:var(--text);font:inherit;cursor:pointer">
+        <span style="font-weight:800;font-size:16px">🛏️ Končím s pivkem</span>
+        <span style="font-size:12px;color:var(--muted)">Zavře kolo pro celou partu a hned začne nové. Jen jednou za den.</span>
+      </button>
+    </sc-if>
+    <sc-if value="{{ sessionOver }}" hint-placeholder-val="{{ false }}">
+      <div style="grid-column:1 / -1;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px;padding:10px;border-radius:16px;background:var(--card-2);border:1.5px solid var(--line-soft);color:var(--muted);box-sizing:border-box;justify-content:center">
+        <span style="font-weight:800;font-size:15px">🛏️ Kolo už dneska zavřel {{ sessionBy }} ({{ sessionScopeLabel }})</span>
+        <span style="font-size:12px">Příště zase zítra.</span>
+      </div>
+    </sc-if>
+  </div>
+
+  <button onClick="{{ goGame }}" style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px;display:flex;align-items:center;gap:12px;font:inherit;color:inherit;text-align:left;cursor:pointer">
+    <span style="width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font-weight:800;font-size:20px">{{ stats.level }}</span>
+    <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+      <span style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-weight:800;font-size:15px">{{ stats.title }}</span><span style="font-size:12px;color:var(--muted);white-space:nowrap">{{ lvl.inLevel }} / {{ lvl.need }} XP</span></span>
+      <span style="display:block;height:8px;border-radius:99px;background:var(--card-2);overflow:hidden"><span style="display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--amber-hi),var(--amber-lo));transition:width .4s;width:{{ lvl.pct }}"></span></span>
+      <span style="font-size:12px;color:var(--muted)">🔥 {{ stats.streak }} dní v řadě · tenhle týden {{ stats.week }} piv</span>
+    </span>
+  </button>
+
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <span style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px;min-width:0">📋 Moje čárky ({{ logCount }}) <span style="color:var(--muted);font-weight:600">/</span> <button onClick="{{ openListek }}" style="padding:0;background:transparent;border:0;color:var(--amber-text);font:inherit;font-weight:800;font-size:16px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">LÍSTEK</button></span>
+      <button onClick="{{ toggleForgot }}" style="padding:7px 12px;border-radius:12px;background:transparent;border:1.5px solid var(--amber);color:var(--amber-text);font:inherit;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap">{{ forgotBtn }}</button>
+    </div>
+    <sc-if value="{{ forgotOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;padding:12px;border-radius:14px;background:var(--amber-tint)">
+        <label style="display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)">Kdy jsi do sebe hodil {{ defName }}?
+          <input type="time" value="{{ forgotTime }}" onChange="{{ onForgotTime }}" style="min-height:44px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:16px;font-weight:800">
+        </label>
+        <button onClick="{{ addForgot }}" style="min-height:44px;padding:0 18px;border-radius:12px;border:0;background:var(--amber);color:var(--on-amber);font:inherit;font-weight:800;font-size:15px;cursor:pointer">Zapsat</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ logEmpty }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:4px 0;color:var(--muted);font-size:14px">Zatím suchej jak Sahara. Dej si první!</p>
+    </sc-if>
+    <sc-for list="{{ log }}" as="r" hint-placeholder-count="2">
+      <div style="display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 10px 10px 12px;border-radius:14px;background:var(--card-2)">
+        <span style="font-size:26px;line-height:1">{{ r.emoji }}</span>
+        <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <span style="font-size:15px;font-weight:800">{{ r.name }} <span style="font-size:12px;font-weight:600;color:var(--muted)">({{ r.meta }})</span></span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2.2;stroke-linecap:round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>Vypito v {{ r.time }}</span>
+        </span>
+        <button onClick="{{ r.del }}" style="display:flex;align-items:center;gap:4px;padding:7px 10px;border-radius:10px;background:var(--danger-tint);border:1px solid var(--danger-line);color:var(--danger);font:inherit;font-weight:800;font-size:13px;cursor:pointer">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:3;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg>Smazat
+        </button>
+      </div>
+    </sc-for>
+  </div>
+</section>
+</sc-if>
+
+<sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="02 Žebříček" style="display:flex;flex-direction:column;gap:12px;padding-top:6px">
+  <div style="display:flex;flex-direction:column;gap:4px">
+    <h1 style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em">🏆 Žebříček štamgastů</h1>
+    <span style="font-size:13px;color:var(--muted)">Živě. Kdo si dá, ten se hned posune.</span>
+  </div>
+  <div style="display:flex;gap:8px;overflow-x:auto;padding:2px 0;scrollbar-width:none">
+    <sc-for list="{{ pubChips }}" as="p" hint-placeholder-count="2">
+      <button onClick="{{ p.pick }}" style="flex:none;display:flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:99px;font:inherit;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;background:{{ p.bg }};color:{{ p.fg }};border:1.5px solid {{ p.border }}">{{ p.emoji }} {{ p.name }}</button>
+    </sc-for>
+    <button onClick="{{ openPubMenu }}" style="flex:none;min-height:40px;padding:0 14px;border-radius:99px;font:inherit;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;background:transparent;color:var(--amber-text);border:1.5px dashed var(--amber)">+ Putyka</button>
+  </div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line-soft)">
+    <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+      <span style="font-weight:800;font-size:15px">{{ curPub.emoji }} {{ curPub.name }}</span>
+      <span style="font-size:12px;color:var(--muted)">{{ curPub.sub }}</span>
+    </span>
+    <sc-if value="{{ curPub.isRoom }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ openCurPub }}" style="min-height:38px;padding:0 14px;border-radius:12px;background:var(--amber-tint);border:1.5px solid var(--amber);color:var(--amber-text);font:inherit;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap">Pozvat · {{ curPub.code }}</button>
+    </sc-if>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card-2)">
+    <sc-for list="{{ ranges }}" as="g" hint-placeholder-count="3">
+      <button onClick="{{ g.pick }}" style="min-height:40px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:{{ g.bg }};color:{{ g.fg }}">{{ g.label }}</button>
+    </sc-for>
+  </div>
+  <div style="padding:12px 14px;border-radius:16px;background:var(--amber-tint);border:1px solid var(--line);font-size:14px"><strong>{{ pos.lead }}</strong> {{ pos.rest }}</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+      <div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;transition:background .5s,border-color .5s;background:{{ r.bg }};border:1.5px solid {{ r.border }}">
+        <span style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:{{ r.rankBg }};color:{{ r.rankFg }}">{{ r.rank }}</span>
+        <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <span style="display:flex;align-items:center;gap:6px;font-weight:800;font-size:15px;min-width:0"><span>{{ r.emoji }}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.name }}</span>
+            <sc-if value="{{ r.up }}" hint-placeholder-val="{{ false }}"><span style="color:var(--ok);font-size:12px">▲</span></sc-if>
+            <sc-if value="{{ r.down }}" hint-placeholder-val="{{ false }}"><span style="color:var(--danger);font-size:12px">▼</span></sc-if>
+          </span>
+          <span style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.sub }}</span>
+        </span>
+        <span style="display:flex;flex-direction:column;align-items:flex-end;gap:1px">
+          <span style="font-weight:800;font-size:20px;color:var(--amber-text);white-space:nowrap">{{ r.value }} ks</span>
+          <span style="font-size:12px;color:var(--muted);white-space:nowrap">{{ r.bac }} ‰</span>
+        </span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:4px">
+    <span style="font-weight:800;font-size:16px;margin-bottom:4px">🍻 Kdo právě nasává</span>
+    <sc-for list="{{ feed }}" as="f" hint-placeholder-count="4">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line-soft);font-size:14px">
+        <span><span style="color:{{ f.dot }}">●</span> {{ f.text }}</span>
+        <span style="font-size:12px;color:var(--muted);white-space:nowrap">{{ f.time }}</span>
+      </div>
+    </sc-for>
+  </div>
+</section>
+</sc-if>
+
+<sc-if value="{{ isGame }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="03 Výzvy" style="display:flex;flex-direction:column;gap:12px;padding-top:6px">
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center">
+    <span style="width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font-weight:800;font-size:38px;box-shadow:0 8px 24px var(--glow)">{{ stats.level }}</span>
+    <span style="display:flex;flex-direction:column;gap:6px;min-width:0">
+      <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Tvoje úroveň</span>
+      <span style="font-weight:800;font-size:22px;line-height:1.1">{{ stats.title }}</span>
+      <span style="display:block;height:10px;border-radius:99px;background:var(--card-2);overflow:hidden"><span style="display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--amber-hi),var(--amber-lo));width:{{ lvl.pct }}"></span></span>
+      <span style="font-size:12px;color:var(--muted)">{{ lvl.inLevel }} / {{ lvl.need }} XP · další: {{ lvl.nextTitle }}</span>
+    </span>
+  </div>
+  <span style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:6px">Týdenní výzvy</span>
+  <sc-for list="{{ challenges }}" as="c" hint-placeholder-count="3">
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">{{ c.emoji }}</span>
+        <span style="font-weight:800;font-size:16px;margin-right:auto">{{ c.title }}</span>
+        <span style="padding:3px 9px;border-radius:99px;background:var(--amber-tint);color:var(--amber-text);font-size:12px;font-weight:800;white-space:nowrap">{{ c.reward }}</span>
+      </div>
+      <span style="font-size:13px;color:var(--muted)">{{ c.desc }}</span>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center">
+        <span style="display:block;height:8px;border-radius:99px;background:var(--card-2);overflow:hidden"><span style="display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--amber-hi),var(--amber-lo));width:{{ c.pct }}"></span></span>
+        <span style="font-size:13px;font-weight:800;white-space:nowrap">{{ c.status }}</span>
+      </div>
+    </div>
+  </sc-for>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:6px"><span style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Odznaky</span><span style="font-size:13px;color:var(--muted)">{{ stats.badgeCount }} z {{ badgeTotal }}</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+    <sc-for list="{{ badges }}" as="b" hint-placeholder-count="9">
+      <div style="background:var(--card);border:1px solid {{ b.border }};border-radius:16px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center">
+        <span style="width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:15px;background:{{ b.circle }};color:{{ b.glyphColor }}">{{ b.glyph }}</span>
+        <span style="font-weight:800;font-size:13px;margin-top:2px">{{ b.name }}</span>
+        <span style="font-size:11px;color:var(--muted);line-height:1.3">{{ b.desc }}</span>
+        <span style="font-size:11px;font-weight:800;color:{{ b.statusColor }}">{{ b.status }}</span>
+      </div>
+    </sc-for>
+  </div>
+</section>
+</sc-if>
+
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+<section data-screen-label="04 Profil" style="display:flex;flex-direction:column;gap:12px;padding-top:6px">
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:center">
+    <span style="width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font-weight:800;font-size:24px">{{ myInitials }}</span>
+    <label style="display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)">Přezdívka u pípy
+      <input value="{{ name }}" onChange="{{ onName }}" maxlength="24" style="min-height:46px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:16px;font-weight:800">
+    </label>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+    <sc-for list="{{ profileStats }}" as="s" hint-placeholder-count="4">
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">{{ s.label }}</span>
+        <span style="font-weight:800;font-size:28px;line-height:1.05">{{ s.value }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <span style="font-weight:800;font-size:17px">🧍 Profil pijana</span>
+      <span style="font-size:13px;color:var(--muted)">Z toho se počítá odhad promile a kdy vystřízlivíš.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;font-weight:700;color:var(--muted)">Váha</span>
+      <div style="display:grid;grid-template-columns:48px minmax(0,1fr) 48px;gap:8px">
+        <button onClick="{{ kgDec }}" aria-label="Ubrat" style="min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-weight:800;font-size:22px;cursor:pointer">−</button>
+        <div style="position:relative">
+          <input type="number" inputmode="numeric" min="35" max="250" value="{{ prof.kg }}" onChange="{{ onKg }}" style="width:100%;box-sizing:border-box;min-height:48px;padding:8px 44px 8px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:20px;font-weight:800">
+          <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--muted);pointer-events:none">kg</span>
+        </div>
+        <button onClick="{{ kgInc }}" aria-label="Přidat" style="min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-weight:800;font-size:22px;cursor:pointer">+</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;font-weight:700;color:var(--muted)">Pohlaví</span>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card-2)">
+        <sc-for list="{{ sexOpts }}" as="o" hint-placeholder-count="2">
+          <button onClick="{{ o.pick }}" style="min-height:42px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;font-weight:700;color:var(--muted)">Jak rychle to z tebe vyprchá</span>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card-2)">
+        <sc-for list="{{ metOpts }}" as="o" hint-placeholder-count="3">
+          <button onClick="{{ o.pick }}" style="display:flex;flex-direction:column;align-items:center;gap:2px;min-height:54px;padding:6px 4px;border-radius:10px;border:0;font:inherit;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }}">
+            <span style="font-weight:800;font-size:14px">{{ o.label }}</span>
+            <span style="font-size:11px;opacity:.8">{{ o.sub }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <span style="font-size:13px;color:var(--muted)">{{ metDesc }}</span>
+    </div>
+    <p style="margin:0;font-size:12px;color:var(--muted)">Je to jen hospodský odhad podle Widmarkova vzorce. Skutečná hladina se může dost lišit a za volant podle toho fakt nesedej.</p>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px">
+    <span style="font-weight:800;font-size:17px">📊 Posledních 7 dní</span>
+    <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end;height:140px">
+      <sc-for list="{{ chart }}" as="d" hint-placeholder-count="7">
+        <div style="display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%">
+          <span style="font-size:12px;font-weight:800">{{ d.v }}</span>
+          <div style="width:100%;border-radius:8px 8px 3px 3px;transition:height .4s;background:{{ d.color }};height:{{ d.h }}"></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px">
+      <sc-for list="{{ chart }}" as="d" hint-placeholder-count="7">
+        <span style="font-size:11px;text-align:center;color:var(--muted)">{{ d.label }}</span>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px">
+    <span style="font-weight:800;font-size:17px">🔐 Zamkni si účet</span>
+    <sc-if value="{{ noAccount }}" hint-placeholder-val="{{ true }}">
+      <span style="font-size:13px;color:var(--muted);text-wrap:pretty">Teď jsi tu anonymně, jen na tomhle telefonu. Zamkni si účet, ať o čárky nepřijdeš při výměně mobilu. Všechno zůstane.</span>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+        <button onClick="{{ loginGoogle }}" style="display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-weight:800;font-size:14px;cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"></path><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.7 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"></path><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"></path></svg>Google
+        </button>
+        <button onClick="{{ loginApple }}" style="display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-weight:800;font-size:14px;cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.8 1.2 1.8 2.6 3.2 2.5 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.2 3.1-2.5.9-1.4 1.3-2.7 1.4-2.8-.1 0-2.9-1.1-2.9-4.2zM13.9 5.4c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1.1 3 1.1.1 2.3-.6 3-1.4z"></path></svg>Apple
+        </button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hasAccount }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--ok-tint);border:1px solid var(--ok)">
+        <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <span style="font-weight:800;font-size:14px;color:var(--ok)">✓ Zamčeno přes {{ account.provider }}</span>
+          <span style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ account.email }}</span>
+        </span>
+        <button onClick="{{ logout }}" style="min-height:36px;padding:0 12px;border-radius:10px;background:transparent;border:1px solid var(--line);color:var(--text);font:inherit;font-weight:800;font-size:13px;cursor:pointer">Odhlásit</button>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <span style="font-weight:800;font-size:17px">🏚️ Moje putyky</span>
+      <button onClick="{{ openPubMenu }}" style="padding:7px 12px;border-radius:12px;background:transparent;border:1.5px solid var(--amber);color:var(--amber-text);font:inherit;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap">+ Nová</button>
+    </div>
+    <sc-for list="{{ myPubs }}" as="p" hint-placeholder-count="1">
+      <button onClick="{{ p.open }}" style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--card-2);border:0;font:inherit;color:var(--text);text-align:left;cursor:pointer">
+        <span style="font-size:24px;line-height:1">{{ p.emoji }}</span>
+        <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <span style="font-weight:800;font-size:15px">{{ p.name }}</span>
+          <span style="font-size:12px;color:var(--muted)">{{ p.sub }}</span>
+        </span>
+        <span style="padding:3px 9px;border-radius:8px;background:var(--amber-tint);color:var(--amber-text);font-size:12px;font-weight:800;letter-spacing:.04em">{{ p.code }}</span>
+      </button>
+    </sc-for>
+    <span style="font-size:12px;color:var(--muted)">Hlavní lokál je pro všechny a zůstáváš v něm vždycky.</span>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <span style="font-weight:800;font-size:17px">👥 Účty pro kámoše</span>
+      <button onClick="{{ openInvite }}" style="padding:7px 12px;border-radius:12px;background:transparent;border:1.5px solid var(--amber);color:var(--amber-text);font:inherit;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap">+ Založit</button>
+    </div>
+    <span style="font-size:13px;color:var(--muted);text-wrap:pretty">Pro líný kamarády. Vyplníš jim profil, pošleš odkaz a oni jen kliknou „To jsem já“.</span>
+    <sc-for list="{{ myInvites }}" as="i" hint-placeholder-count="1">
+      <button onClick="{{ i.open }}" style="display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--card-2);border:0;font:inherit;color:var(--text);text-align:left;cursor:pointer">
+        <span style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--amber);color:var(--on-amber);font-weight:800;font-size:13px">{{ i.initials }}</span>
+        <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <span style="font-weight:800;font-size:15px">{{ i.name }}</span>
+          <span style="font-size:12px;color:var(--muted)">{{ i.sub }}</span>
+        </span>
+        <span style="font-size:12px;font-weight:800;color:{{ i.statusColor }};white-space:nowrap">{{ i.status }}</span>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+    <span style="font-weight:800;font-size:17px">🔑 Admin heslo</span>
+    <span style="font-size:13px;color:var(--muted);text-wrap:pretty">Chrání zavření kola pro celej Hlavní lokál. V ostré verzi bude v konfiguraci serveru, tady si ho můžeš změnit.</span>
+    <input type="password" value="{{ adminPass }}" onChange="{{ onAdminPass }}" placeholder="heslo" style="min-height:46px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:16px;font-weight:800;letter-spacing:.1em">
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+    <span style="font-weight:800;font-size:17px">🌗 Vzhled</span>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card-2)">
+      <sc-for list="{{ themeOpts }}" as="o" hint-placeholder-count="2">
+        <button onClick="{{ o.pick }}" style="min-height:42px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;padding:6px 0">
+    <button onClick="{{ reset }}" style="background:transparent;border:0;padding:6px;color:var(--danger);font:inherit;text-decoration:underline;cursor:pointer">Smazat a obnovit demo data</button>
+  </div>
+</section>
+</sc-if>
+
+</main>
+
+<nav style="position:sticky;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line-soft);padding:6px 8px calc(6px + env(safe-area-inset-bottom))">
+  <button onClick="{{ goCount }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:52px;border-radius:14px;border:0;font:inherit;font-size:12px;font-weight:800;cursor:pointer;background:{{ tabs.count.bg }};color:{{ tabs.count.color }}">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M17 11h1a3 3 0 0 1 0 6h-1"></path><path d="M9 12v6"></path><path d="M13 12v6"></path><path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.57.5 2.5.5S9.44 2 11 2s2 1.5 3 1.5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z"></path><path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path></svg>
+    Pípa
+  </button>
+  <button onClick="{{ goBoard }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:52px;border-radius:14px;border:0;font:inherit;font-size:12px;font-weight:800;cursor:pointer;background:{{ tabs.board.bg }};color:{{ tabs.board.color }}">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+    Žebříček
+  </button>
+  <button onClick="{{ goGame }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:52px;border-radius:14px;border:0;font:inherit;font-size:12px;font-weight:800;cursor:pointer;background:{{ tabs.game.bg }};color:{{ tabs.game.color }}">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
+    Výzvy
+  </button>
+  <button onClick="{{ goProfile }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:52px;border-radius:14px;border:0;font:inherit;font-size:12px;font-weight:800;cursor:pointer;background:{{ tabs.profile.bg }};color:{{ tabs.profile.color }}">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    Profil
+  </button>
+</nav>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheet }}" style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center">
+  <div onClick="{{ stop }}" style="width:100%;max-width:480px;max-height:90vh;overflow:auto;box-sizing:border-box;background:var(--sheet);border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;box-shadow:0 -20px 60px rgba(0,0,0,.45)">
+    <span style="align-self:center;width:44px;height:5px;border-radius:9px;background:var(--line)"></span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-weight:800;font-size:21px;margin-right:auto">{{ sh.title }}</span>
+      <button onClick="{{ closeSheet }}" aria-label="Zavřít" style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:0;background:var(--card-2);color:var(--text);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2.6;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    </div>
+    <span style="font-size:14px;color:var(--muted);margin-top:-6px">{{ sh.hint }}</span>
+    <sc-if value="{{ hasSizes }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card-2)">
+        <sc-for list="{{ sizeOpts }}" as="o" hint-placeholder-count="2">
+          <button onClick="{{ o.pick }}" style="min-height:42px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+      <sc-for list="{{ shVars }}" as="v" hint-placeholder-count="4">
+        <button onClick="{{ v.pick }}" style="position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:12px;border-radius:16px;font:inherit;color:var(--text);text-align:left;cursor:pointer;background:{{ v.bg }};border:1.5px solid {{ v.border }}">
+          <span style="font-size:26px;line-height:1.1">{{ v.emoji }}</span>
+          <span style="position:absolute;top:10px;right:10px;padding:2px 7px;border-radius:8px;background:var(--amber-tint);color:var(--amber-text);font-size:11px;font-weight:800">{{ v.abv }}</span>
+          <span style="font-weight:800;font-size:15px;margin-top:4px">{{ v.name }}</span>
+          <span style="font-size:12px;color:var(--muted)">{{ v.vol }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <span style="font-size:13px;color:var(--muted)">Uložením se tahle volba nastaví na hlavní tlačítko na Pípě.</span>
+    <button onClick="{{ saveSheet }}" style="min-height:56px;border-radius:16px;border:0;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font:inherit;font-weight:800;font-size:18px;cursor:pointer;box-shadow:0 8px 24px var(--glow)">Uložit</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ listekOpen }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="05 Lístek" onClick="{{ closeListek }}" style="position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;font-family:var(--font-body)">
+  <div onClick="{{ stop }}" style="position:relative;width:100%;max-width:360px;max-height:calc(100vh - 40px);box-sizing:border-box;background:#fbfaf6;color:#1e2a6b;border-radius:3px;box-shadow:0 2px 0 #e9e6dd,0 4px 0 #dedbd2,0 6px 0 #d3d0c7,0 24px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;padding:18px 20px 16px;gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(30,42,107,.55)">Tahem prstu udělej čárku</span>
+      <button onClick="{{ closeListek }}" aria-label="Zavřít" style="width:40px;height:40px;border-radius:50%;display:grid;place-items:center;border:0;background:rgba(30,42,107,.08);color:#1e2a6b;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2.6;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;overflow:auto;padding:4px 0">
+      <sc-for list="{{ listek }}" as="row" hint-placeholder-count="5">
+        <div onPointerDown="{{ row.down }}" onPointerMove="{{ row.move }}" onPointerUp="{{ row.up }}" onPointerCancel="{{ row.cancel }}" style="position:relative;display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;align-items:start;min-height:64px;padding:6px 4px;border-radius:8px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair;background:{{ row.bg }}">
+          <span style="font-family:'Segoe Print','Bradley Hand','Comic Sans MS',cursive;font-size:22px;font-weight:700;line-height:52px;white-space:nowrap;pointer-events:none">{{ row.label }}:</span>
+          <div style="display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center;min-height:52px;pointer-events:none">
+            <sc-for list="{{ row.groups }}" as="g" hint-placeholder-count="1">{{ g.svg }}</sc-for>
+          </div>
+          {{ row.stroke }}
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px">
+      <span style="font-family:'Segoe Print','Bradley Hand','Comic Sans MS',cursive;font-size:19px;line-height:1.2">{{ listekTotal }}</span>
+    </div>
+    <button onClick="{{ closeListek }}" style="align-self:center;display:flex;align-items:center;gap:8px;min-height:46px;padding:0 22px;border-radius:99px;border:2px solid #1e2a6b;background:transparent;color:#1e2a6b;font:inherit;font-weight:800;font-size:15px;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>Zpět</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ endOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeEnd }}" style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:20px">
+  <div onClick="{{ stop }}" style="width:100%;max-width:400px;max-height:calc(100vh - 40px);overflow:auto;box-sizing:border-box;background:var(--sheet);border:1.5px solid var(--line);border-radius:26px;padding:22px 20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.45)">
+    <span style="font-size:40px;line-height:1;text-align:center">🛏️</span>
+    <span style="font-weight:800;font-size:22px;text-align:center;line-height:1.2">Fakt končíme?</span>
+    <span style="font-size:14px;color:var(--muted);text-align:center;text-wrap:pretty">Čárky se uloží do historie a všichni začínají od nuly. Jde to jen jednou za den.</span>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card-2)">
+      <sc-for list="{{ endScopeOpts }}" as="o" hint-placeholder-count="2">
+        <button onClick="{{ o.pick }}" style="display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;padding:6px 4px;border-radius:10px;border:0;font:inherit;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }}">
+          <span style="font-weight:800;font-size:14px">{{ o.label }}</span>
+          <span style="font-size:11px;opacity:.8">{{ o.sub }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ endIsGlobal }}" hint-placeholder-val="{{ false }}">
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted)">Heslo hospodského (admin)
+        <input type="password" value="{{ endPass }}" onChange="{{ onEndPass }}" placeholder="••••••" style="min-height:48px;padding:8px 14px;border-radius:14px;border:1.5px solid {{ endPassBorder }};background:var(--card-2);color:var(--text);font:inherit;font-size:18px;font-weight:800;letter-spacing:.1em">
+      </label>
+    </sc-if>
+    <span style="font-size:13px;color:var(--muted);text-align:center">Nejdřív dokaž, že ještě vidíš na čísla:</span>
+    <div style="display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:16px;background:var(--amber-tint);border:1px solid var(--amber)">
+      <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--amber-text)">Hospodská matika</span>
+      <span style="font-weight:800;font-size:30px;letter-spacing:.04em;line-height:1">{{ endQ.text }}</span>
+    </div>
+    <input type="number" inputmode="numeric" value="{{ endAnswer }}" onChange="{{ onEndAnswer }}" placeholder="?" style="min-height:54px;padding:8px 14px;border-radius:14px;border:1.5px solid {{ endBorder }};background:var(--card-2);color:var(--text);font:inherit;font-size:24px;font-weight:800;text-align:center">
+    <sc-if value="{{ endWrong }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--danger);font-weight:700;text-align:center">{{ endError }}</span></sc-if>
+    <button onClick="{{ confirmEnd }}" style="min-height:54px;border-radius:16px;border:0;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font:inherit;font-weight:800;font-size:17px;cursor:pointer;box-shadow:0 8px 24px var(--glow)">Zavřít kolo</button>
+    <button onClick="{{ closeEnd }}" style="min-height:44px;background:transparent;border:0;color:var(--muted);font:inherit;font-weight:700;font-size:14px;cursor:pointer">Ještě ne, dáme jedno</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ psOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closePs }}" style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center">
+  <div onClick="{{ stop }}" style="width:100%;max-width:480px;max-height:90vh;overflow:auto;box-sizing:border-box;background:var(--sheet);border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;box-shadow:0 -20px 60px rgba(0,0,0,.45)">
+    <span style="align-self:center;width:44px;height:5px;border-radius:9px;background:var(--line)"></span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-weight:800;font-size:21px;margin-right:auto">{{ ps.title }}</span>
+      <button onClick="{{ closePs }}" aria-label="Zavřít" style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:0;background:var(--card-2);color:var(--text);cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width:2.6;stroke-linecap:round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    </div>
+    <span style="font-size:14px;color:var(--muted);margin-top:-6px">{{ ps.hint }}</span>
+    <sc-if value="{{ psMenu }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ psGoCreate }}" style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--card);border:1.5px solid var(--line);font:inherit;color:var(--text);text-align:left;cursor:pointer">
+        <span style="font-size:30px;line-height:1">🏚️</span>
+        <span style="display:flex;flex-direction:column;gap:3px"><span style="font-weight:800;font-size:16px">Založit putyku</span><span style="font-size:13px;color:var(--muted)">Vlastní místnost pro tvoji partu. Dostaneš kód na pozvání.</span></span>
+      </button>
+      <button onClick="{{ psGoJoin }}" style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--card);border:1.5px solid var(--line);font:inherit;color:var(--text);text-align:left;cursor:pointer">
+        <span style="font-size:30px;line-height:1">🔑</span>
+        <span style="display:flex;flex-direction:column;gap:3px"><span style="font-weight:800;font-size:16px">Vstoupit kódem</span><span style="font-size:13px;color:var(--muted)">Kámoš ti poslal kód nebo odkaz? Sem s ním.</span></span>
+      </button>
+    </sc-if>
+    <sc-if value="{{ psCreate }}" hint-placeholder-val="{{ false }}">
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted)">Jak se bude putyka jmenovat?
+        <input value="{{ ps.name }}" onChange="{{ psName }}" maxlength="28" placeholder="U Baráka" style="min-height:50px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:18px;font-weight:800">
+      </label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ psEmojis }}" as="e" hint-placeholder-count="6">
+          <button onClick="{{ e.pick }}" style="width:48px;height:48px;border-radius:14px;font-size:24px;cursor:pointer;background:{{ e.bg }};border:1.5px solid {{ e.border }}">{{ e.emoji }}</button>
+        </sc-for>
+      </div>
+      <button onClick="{{ createPub }}" style="min-height:56px;border-radius:16px;border:0;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font:inherit;font-weight:800;font-size:18px;cursor:pointer;box-shadow:0 8px 24px var(--glow)">Založit putyku</button>
+    </sc-if>
+    <sc-if value="{{ psJoin }}" hint-placeholder-val="{{ false }}">
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted)">Kód putyky
+        <input value="{{ ps.code }}" onChange="{{ psCode }}" placeholder="SKLEP-9Q" autocapitalize="characters" style="min-height:50px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:18px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">
+      </label>
+      <sc-if value="{{ psHasError }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--danger);font-weight:700">{{ ps.error }}</span></sc-if>
+      <span style="font-size:12px;color:var(--muted)">Pro demo zkus kód SKLEP-9Q.</span>
+      <button onClick="{{ joinPub }}" style="min-height:56px;border-radius:16px;border:0;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font:inherit;font-weight:800;font-size:18px;cursor:pointer;box-shadow:0 8px 24px var(--glow)">Vstoupit</button>
+    </sc-if>
+    <sc-if value="{{ psDetail }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--amber-tint);border:1px solid var(--amber)">
+        <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--amber-text)">Kód na pozvání</span>
+        <span style="font-weight:800;font-size:32px;letter-spacing:.08em;line-height:1">{{ psPub.code }}</span>
+        <span style="font-size:13px;color:var(--muted)">pitpivo.cz/p/{{ psPub.code }}</span>
+        <button onClick="{{ psCopy }}" style="align-self:flex-start;min-height:40px;padding:0 14px;border-radius:12px;border:0;background:var(--amber);color:var(--on-amber);font:inherit;font-weight:800;font-size:14px;cursor:pointer">Kopírovat odkaz</button>
+      </div>
+      <span style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">{{ psPub.memberText }}</span>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <sc-for list="{{ psPub.memberList }}" as="m" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-top:1px solid var(--line-soft);font-size:14px;font-weight:700"><span style="font-size:20px">{{ m.emoji }}</span>{{ m.name }}<span style="margin-left:auto;font-size:12px;color:var(--muted);font-weight:600">{{ m.sub }}</span>
+            <sc-if value="{{ m.kickable }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ m.kick }}" style="min-height:32px;padding:0 10px;border-radius:9px;background:var(--danger-tint);border:1px solid var(--danger-line);color:var(--danger);font:inherit;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">Vyhodit</button>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <button onClick="{{ psLeave }}" style="min-height:48px;border-radius:14px;background:var(--danger-tint);border:1px solid var(--danger-line);color:var(--danger);font:inherit;font-weight:800;font-size:15px;cursor:pointer">{{ psPub.leaveLabel }}</button>
+    </sc-if>
+    <sc-if value="{{ psInvite }}" hint-placeholder-val="{{ false }}">
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted)">Přezdívka kámoše
+        <input value="{{ ps.inv.name }}" onChange="{{ invName }}" maxlength="24" placeholder="Kotel" style="min-height:50px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:18px;font-weight:800">
+      </label>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted)">Váha
+          <div style="position:relative">
+            <input type="number" inputmode="numeric" min="35" max="250" value="{{ ps.inv.kg }}" onChange="{{ invKg }}" style="width:100%;box-sizing:border-box;min-height:48px;padding:8px 40px 8px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--text);font:inherit;font-size:18px;font-weight:800">
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none">kg</span>
+          </div>
+        </label>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--muted)">Pohlaví
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card-2)">
+            <sc-for list="{{ invSexOpts }}" as="o" hint-placeholder-count="2">
+              <button onClick="{{ o.pick }}" style="min-height:40px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:13px;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <button onClick="{{ createInvite }}" style="min-height:56px;border-radius:16px;border:0;background:linear-gradient(180deg,var(--amber-hi),var(--amber-lo));color:var(--on-amber);font:inherit;font-weight:800;font-size:18px;cursor:pointer;box-shadow:0 8px 24px var(--glow);opacity:{{ invOpacity }}">Vytvořit pozvánku</button>
+    </sc-if>
+    <sc-if value="{{ psInviteDone }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:16px;background:var(--amber-tint);border:1px solid var(--amber)">
+        <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--amber-text)">Pozvánka pro {{ ps.done.name }}</span>
+        <span style="font-weight:800;font-size:32px;letter-spacing:.08em;line-height:1">{{ ps.done.code }}</span>
+        <span style="font-size:13px;color:var(--muted)">pitpivo.cz/j/{{ ps.done.code }}</span>
+        <button onClick="{{ psCopy }}" style="align-self:flex-start;min-height:40px;padding:0 14px;border-radius:12px;border:0;background:var(--amber);color:var(--on-amber);font:inherit;font-weight:800;font-size:14px;cursor:pointer">Kopírovat odkaz</button>
+      </div>
+      <span style="font-size:13px;color:var(--muted);text-wrap:pretty">Pošli to kámošovi. Otevře odkaz, klikne „To jsem já“ a může pít. Heslo řešit nemusí, účet si může zamknout později sám.</span>
+      <button onClick="{{ closePs }}" style="min-height:52px;border-radius:16px;border:0;background:var(--card-2);color:var(--text);font:inherit;font-weight:800;font-size:16px;cursor:pointer">Hotovo</button>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'dark'|'light'&quot;},&quot;live&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Žebříček&quot;},&quot;speed&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pomalu&quot;,&quot;normálně&quot;,&quot;rychle&quot;],&quot;default&quot;:&quot;normálně&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Žebříček&quot;},&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;count&quot;,&quot;board&quot;,&quot;game&quot;,&quot;profile&quot;],&quot;default&quot;:&quot;count&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const CATS={
+ big:{label:'Pivo',sub:'0,5 l',emoji:'🍺',beer:1,xp:10,ml:500,def:'12',title:'Velký pivko? 🍺',hint:'Desítka, jedenáctka, nebo poctivá dvanáctka?',cta:'Natočit a vypít! 🍺',
+   vars:[{id:'10',name:'Velká 10°',abv:.043},{id:'11',name:'Velká 11°',abv:.047},{id:'12',name:'Velká 12°',abv:.05}]},
+ small:{label:'Malý',sub:'0,3 l',emoji:'🍺',beer:1,xp:6,ml:300,def:'12',title:'Jen malý? 🍺',hint:'Na rozjezd nebo na cestu. Jaký stupeň?',cta:'Natočit a vypít! 🍺',
+   vars:[{id:'10',name:'Malá 10°',abv:.043},{id:'11',name:'Malá 11°',abv:.047},{id:'12',name:'Malá 12°',abv:.05}]},
+ wine:{label:'Víno',sub:'0,2 l',emoji:'🍷',beer:0,xp:8,ml:200,def:'white',title:'Vínečko? 🍷',hint:'Bílý, červený, nebo střik pro sportovce?',cta:'Nalejt a vypít! 🍷',
+   vars:[{id:'white',name:'Bílé víno',abv:.115},{id:'red',name:'Červené víno',abv:.13},{id:'rose',name:'Růžové víno',abv:.12},{id:'sekt',name:'Šampus',abv:.11,ml:150,emoji:'🥂'},{id:'mulled',name:'Svařák',abv:.10,emoji:'♨️'},{id:'spritz',name:'Vinný střik',abv:.06,ml:300,emoji:'🧊'}]},
+ shot:{label:'Panák',sub:'2–4 cl',emoji:'🥃',beer:0,xp:5,ml:40,def:'vodka',sizes:true,title:'Co ti mám nalejt? 🥃',hint:'Vyber kořalku a jestli malýho, nebo pořádnýho.',cta:'Nalejt a kopnout! 🥃',
+   vars:[{id:'vodka',name:'Vodka',abv:.40},{id:'rum',name:'Rum',abv:.375},{id:'tuzemak',name:'Tuzemák',abv:.375},{id:'whiskey',name:'Whiskey',abv:.40},{id:'becher',name:'Becherovka',abv:.38,emoji:'🌿'},{id:'fernet',name:'Fernet',abv:.38,emoji:'🌿'},{id:'slivo',name:'Slivovice',abv:.50,emoji:'🔥'},{id:'jager',name:'Jägermeister',abv:.35,emoji:'🦌'},{id:'tequila',name:'Tequila',abv:.38,emoji:'🌵'},{id:'zelena',name:'Zelená',abv:.20,emoji:'🍃'}]},
+ nealko:{label:'Nealko',sub:'za řidiče',emoji:'🥤',beer:0,xp:4,ml:300,def:'water',title:'Dneska za řidiče? 🥤',hint:'Nealko se počítá do hydratace a dává body taky.',cta:'Dát si! 🥤',
+   vars:[{id:'water',name:'Voda',abv:0,ml:300,emoji:'💧'},{id:'kofola',name:'Kofola',abv:0,ml:500},{id:'nealko',name:'Nealko pivo',abv:.005,ml:500,emoji:'🍺'}]}};
+const ORDER=['big','small','wine','shot','nealko'];
+const CTA={big:'Dej si pivko',small:'Dej si malý',wine:'Dej si vínko',shot:'Kopni panáka',nealko:'Piju vodu'};
+function catIcon(k,size){
+  const h=React.createElement,box={height:size,display:'grid',placeItems:'center',lineHeight:1};
+  if(k==='nealko')return h('svg',{width:size*.8,height:size,viewBox:'0 0 24 36',fill:'none',stroke:'currentColor',style:{strokeWidth:1.8,strokeLinecap:'round',strokeLinejoin:'round',color:'#3aa8e6'}},
+    h('path',{d:'M9 2h6v4H9z',fill:'#3aa8e6'}),h('path',{d:'M9 6c0 3-4 4-4 8v17a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V14c0-4-4-5-4-8'}),
+    h('path',{d:'M5 17h14M5 27h14',opacity:.6}),h('path',{d:'M7 20v4',opacity:.4}));
+  const e={big:'🍺',small:'🍺',wine:'🍷',shot:'🥃'}[k],f={big:1,small:.68,wine:.92,shot:.62}[k]||1;
+  return h('span',{style:box},h('span',{style:{fontSize:size*f}},e));
+}
+const QUOTES=[
+ {t:'Hmmm, pivo – příčina a řešení všech životních problémů.',who:'Homer Simpson',src:'Simpsonovi'},
+ {t:'Perte mi to rovnou do žíly.',who:'Barney Gumble',src:'Simpsonovi'},
+ {t:'Homere, Vočko, ááá píívo!',who:'Barney Gumble',src:'Simpsonovi'},
+ {t:'Kdy se jen poučím? Odpovědi na složité otázky bytí a nebytí přece nenajdu na dně půllitru, ale v televizi!',who:'Homer Simpson',src:'Simpsonovi'},
+ {t:'Dobře, přestaňte panikařit. Vydělám nějaké peníze tím, že prodám jedno ze svých jater. Jedno mi stačí.',who:'Homer Simpson',src:'Simpsonovi'},
+ {t:'Počkejte, já bych neměl řídit. Vždyť jsem opilý jako prase.',who:'Homer Simpson',src:'Simpsonovi'},
+ {t:'Poslední bar ve Springfieldu. Jestli mě nepustí dovnitř, budu asi muset přestat s pitím!',who:'Homer Simpson',src:'Simpsonovi'},
+ {t:'Ticho, játra!',who:'Homer Simpson',src:'Simpsonovi'},
+ {t:'Nemůžeš zavřít, budu muset domů a pít lepší pivo za poloviční cenu v přirozeném světle!',who:'Homer Simpson',src:'Simpsonovi'},
+ {t:'Gin a tonik? Ty se míchaj?',who:'Vočko Szyslak',src:'Simpsonovi'},
+ {t:'Pijte Duff! Ale s mírou!',who:'Maskot Duff',src:'Simpsonovi'},
+ {t:'S pivem Duff odlétnou všechny starosti jako motýlci!',who:'Reklama na Duff',src:'Simpsonovi'},
+ {t:'Kdo nepije s námi, pije proti nám!',who:'Kotlolepič Babula',src:'Hospoda'},
+ {t:'Zdar a sílu najdeš v pívu.',who:'Babula',src:'Hospoda'},
+ {t:'Co je to dvanáct piv? To je jako když ještěrka přeběhne přes palouček.',who:'Babula',src:'Hospoda'},
+ {t:'S pivíčkem je to jako se ženskejma. První pivo je jako první rande.',who:'Babula',src:'Hospoda'},
+ {t:'Chmelomok, božský lok!',who:'Motto',src:'Hospoda'},
+ {t:'V hospodě je líp, než na světě.',who:'Dr. Zatloukal',src:'Hospoda'},
+ {t:'Já bych zase to pivo zrzavé a mokřejší.',who:'Dr. Zatloukal',src:'Hospoda'},
+ {t:'Tak pánové, tady vám nesu ty vaše zrzavý štěstíčka.',who:'Jarda Dušek',src:'Hospoda'},
+ {t:'Stejně, když tě vidím, Tomáši, jak piješ, tak bych chtěl, aby mi takhle odtejkala vana.',who:'Jarda Dušek',src:'Hospoda'},
+ {t:'Tankoval jak raketoplán.',who:'Jarda Dušek',src:'Hospoda'},
+ {t:'Všichni chlastaj, aby si někdo předplatil třeba Vesmír, to nikdo.',who:'Jarda Dušek',src:'Hospoda'},
+ {t:'Protože je pátek a ze záchytky pouštěli dřív.',who:'Jarda Dušek',src:'Hospoda'},
+ {t:'Přece tady nebudu cucat lahváče jako nějakej puberťák!',who:'Venca Novák',src:'Hospoda'},
+ {t:'Alkohol nepatří mezi doporučené prostředky stresových situací.',who:'Dr. Prášek',src:'Hospoda'}];
+const DAY=864e5,KEY='pitpivo-demo-v2';
+const BASE={beers:137,liters:64.5,xp:1370};
+const sod=ts=>{const d=new Date(ts);d.setHours(0,0,0,0);return d.getTime();};
+const prevDay=k=>sod(k-DAY/2);
+const TITLES=['Nováček','Ochutnávač','Hospodský host','Pivař','Štamgast','Pivní znalec','Mistr čepu','Sládek','Legenda hospody','Pivní bůh'];
+const BADGES=[
+ {id:'first',name:'První doušek',glyph:'01',desc:'První zapsaný pivo',f:s=>[s.totalBeers,1]},
+ {id:'hat',name:'Hattrick',glyph:'×3',desc:'3 piva za den',f:s=>[s.maxDayBeers,3]},
+ {id:'ten',name:'Desítka',glyph:'10',desc:'10 piv celkem',f:s=>[s.totalBeers,10]},
+ {id:'hundred',name:'Stovka',glyph:'100',desc:'100 piv celkem',f:s=>[s.totalBeers,100]},
+ {id:'streak',name:'Týdenní série',glyph:'7D',desc:'7 dní v kuse',f:s=>[s.streak,7]},
+ {id:'taster',name:'Degustátor',glyph:'5×',desc:'5 různých pitíček',f:s=>[s.distinct,5]},
+ {id:'water',name:'Hydratace',glyph:'H₂O',desc:'3 nealka za den',f:s=>[s.maxDayNealko,3]},
+ {id:'owl',name:'Noční sova',glyph:'0:00',desc:'Pivo po půlnoci',f:s=>[s.owl?1:0,1]},
+ {id:'k500',name:'Půltisícovka',glyph:'500',desc:'500 piv celkem',f:s=>[s.totalBeers,500]}];
+const PEOPLE=[
+ {id:'p1',name:'Lukášek',emoji:'🧑‍🚀',today:3,shots:1,week:14,total:412,kg:92,sex:'m'},
+ {id:'p2',name:'Nugát',emoji:'😎',today:4,shots:0,week:11,total:388,kg:78,sex:'m'},
+ {id:'p3',name:'Cuchypet',emoji:'🐵',today:1,shots:0,week:9,total:203,kg:70,sex:'m'},
+ {id:'p4',name:'Kupis',emoji:'🦊',today:2,shots:2,week:16,total:521,kg:101,sex:'m'},
+ {id:'p5',name:'Milda',emoji:'👑',today:0,shots:0,week:6,total:176,kg:84,sex:'m'},
+ {id:'p6',name:'Pája',emoji:'🐻',today:2,shots:1,week:8,total:149,kg:62,sex:'f'},
+ {id:'p7',name:'Živňák',emoji:'🦁',today:5,shots:1,week:13,total:297,kg:88,sex:'m'},
+ {id:'p8',name:'Kotel',emoji:'🔥',today:1,shots:0,week:5,total:98,kg:95,sex:'m'},
+ {id:'p9',name:'Šnek',emoji:'🐌',today:0,shots:0,week:3,total:64,kg:74,sex:'m'}];
+const ADMIN_PASS_DEFAULT='pivo123'; // demo: v produkci jde heslo do konfigurace serveru (Cloud Function), ne do klienta
+const PUB_EMOJIS=['🏚️','🍻','🛖','🏕️','🏠','🎱','⚽','🎸'];
+const seedPubs=()=>[{id:'baraka',name:'U Baráka',emoji:'🏚️',code:'BARAK-42',owner:true,members:['p1','p2','p4','p7']}];
+const JOINABLE={'SKLEP-9Q':{id:'sklep',name:'Sklep u Mildy',emoji:'🍻',owner:false,members:['p5','p6','p8','p3']}};
+const DEMO_INVITES={'KOTEL-7F2X':{name:'Kotel',kg:95,sex:'m'}};
+const slug=s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z]/g,'').toUpperCase();
+const genCode=n=>{const p=(slug(n)||'PUTYKA').slice(0,5),a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<4;i++)r+=a[Math.floor(Math.random()*a.length)];return p+'-'+r;};
+const normCode=c=>(c||'').trim().toUpperCase().replace(/\s+/g,'').replace(/^.*\//,'');
+const LISTEK_LABEL={big:'Pivko',small:'Malý',wine:'Vínko',shot:'Panák',nealko:'Voda'};
+function tallySvg(n,key){
+  const h=React.createElement,W=14,w=n*W+(n===5?8:6),j=(i,k)=>((i*7+k*3+n)%5-2);
+  const strokes=[];
+  for(let i=0;i<Math.min(n,4);i++){const x=8+i*W;strokes.push(h('path',{key:'s'+i,d:`M${x+j(i,1)} 6 Q${x+2+j(i,2)} 20 ${x+j(i,3)} 36`}));}
+  if(n===5)strokes.push(h('path',{key:'x',d:`M2 32 Q${w/2} 24 ${w-2} 8`}));
+  return h('svg',{key,width:w,height:42,viewBox:`0 0 ${w} 42`,fill:'none',stroke:'#1e2a6b',style:{strokeWidth:2.6,strokeLinecap:'round',display:'block'}},strokes);
+}
+const MET={fast:{label:'Rychle',b:0.2,desc:'Spaluješ jak kamna v kotelně.'},normal:{label:'Normálně',b:0.15,desc:'Průměrnej štamgast, nic extra.'},slow:{label:'Pomalu',b:0.1,desc:'Drží se tě to jak klíště.'}};
+const SPEED={pomalu:[5000,9000],'normálně':[2500,5000],rychle:[800,1800]};
+const n2=(v,d)=>v.toLocaleString('cs-CZ',{minimumFractionDigits:d,maximumFractionDigits:d});
+const vol=ml=>ml>=100?n2(ml/1000,1)+' l':Math.round(ml/10)+' cl';
+const pct1=a=>n2(a*100,1)+' %';
+const pct0=a=>(Math.round(a*1000)%10?n2(a*100,1):n2(a*100,0))+' %';
+const fmtDur=ms=>{const m=Math.max(0,Math.round(ms/6e4)),h=Math.floor(m/60);return h?`${h} h ${m%60} min`:`${m} min`;};
+const kgOf=p=>Math.min(250,Math.max(35,Number(p.kg)||80));
+const rOf=p=>p.sex==='f'?0.55:0.68;
+const levelOf=xp=>{let L=1;while(xp>=50*(L+1)*L)L++;return L;};
+const titleOf=L=>TITLES[Math.min(L-1,TITLES.length-1)];
+const pl=(n,a,b,c)=>n===1?a:(n>=2&&n<=4)?b:c;
+const word=n=>pl(n,'pivo','piva','piv');
+const initials=n=>(n||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+const hhmm=ts=>{const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
+const info=d=>{const c=CATS[d.cat];if(!c)return null;const v=c.vars.find(x=>x.id===d.v)||c.vars[0];const ml=d.ml||v.ml||c.ml;
+  return {c,v,cat:d.cat,ml,abv:v.abv,beer:c.beer,xp:c.xp,emoji:v.emoji||c.emoji,name:c.sizes?`${v.name} · ${ml>=40?'velkej':'malej'}`:v.name,key:d.cat+':'+v.id,alco:v.abv>=0.01};};
+function bacOf(drinks,prof,now){
+  const beta=(MET[prof.met]||MET.normal).b,wr=kgOf(prof)*rOf(prof);
+  const list=drinks.filter(d=>d.ts>now-36*36e5&&d.ts<=now).map(d=>[d,info(d)]).filter(x=>x[1]&&x[1].abv>0).sort((a,b)=>a[0].ts-b[0].ts);
+  let bac=0,t=null;
+  list.forEach(([d,i])=>{if(t!=null)bac=Math.max(0,bac-beta*(d.ts-t)/36e5);bac+=i.ml*i.abv*0.789/wr;t=d.ts;});
+  if(t!=null)bac=Math.max(0,bac-beta*(now-t)/36e5);
+  return {bac,soberMs:bac/beta*36e5};
+}
+const otherBac=(p,now)=>{if(!p.today&&!p.shots)return 0;const start=p.start||now-((p.today||1)*38+15)*6e4;return Math.max(0,(p.today*19.7+(p.shots||0)*12.6)/(kgOf(p)*rOf(p))-0.15*(now-start)/36e5);};
+function seedDrinks(){
+  const now=Date.now(),t0=sod(now),out=[];let id=1;
+  [[6,[['big','12'],['big','12']]],[4,[['big','10'],['wine','white']]],[3,[['small','12']]],[2,[['big','12'],['big','12']]],[1,[['big','12'],['small','12']]]]
+    .forEach(([d,l])=>l.forEach(([cat,v],i)=>out.push({id:id++,cat,v,ts:t0-d*DAY+(19*60+30+i*45)*60000})));
+  out.push({id:id++,cat:'big',v:'12',ts:Math.max(t0+60000,now-95*60000)});
+  out.push({id:id++,cat:'big',v:'12',ts:Math.max(t0+120000,now-35*60000)});
+  return out;
+}
+const seedOthers=()=>{const n=Date.now();return PEOPLE.map(p=>({...p,start:p.today?n-(p.today*38+15)*6e4:null}));};
+function seedFeed(){const n=Date.now();return [
+  {id:'s1',text:'Živňák si dal 5. pivo',ts:n-25000},
+  {id:'s2',text:'Nugát získal odznak Hattrick',ts:n-140000,accent:true},
+  {id:'s3',text:'Kupis kopnul slivovici',ts:n-410000}];}
+
+class Component extends DCLogic {
+  state=(()=>{
+    let s=null;try{s=JSON.parse(localStorage.getItem(KEY));}catch(e){}
+    const now=Date.now();
+    return {tab:(this.props&&this.props.startTab)||'count',theme:(s&&s.theme)||null,
+      def:(s&&s.def)||{cat:'big',v:'12'},drinks:(s&&s.drinks)||seedDrinks(),
+      others:(s&&s.day===sod(now)&&s.others)||seedOthers(),
+      prof:(s&&s.prof)||{kg:80,sex:'m',met:'normal'},name:(s&&s.name)||'',
+      onboarded:!!(s&&s.onboarded),ob:{step:'form',name:'',kg:80,sex:'m',code:'',found:null,error:''},
+      account:(s&&s.account)||null,sessionEnd:(s&&s.sessionEnd)||null,sessionBy:(s&&s.sessionBy)||'',sessionClosed:(s&&s.sessionClosed)||null,sessionScope:(s&&s.sessionScope)||'global',sessionNote:false,end:null,adminPass:(s&&s.adminPass)||ADMIN_PASS_DEFAULT,pubs:(s&&s.pubs)||seedPubs(),pub:'main',invites:(s&&s.invites)||[],ps:null,
+      range:'today',feed:seedFeed(),toasts:[],moved:{},flash:null,lastAdd:null,quote:null,sheet:null,
+      forgotOpen:false,forgotTime:hhmm(now-30*6e4),now};
+  })();
+  toast(t){this.setState(s=>({toasts:[...s.toasts,{id:'t'+Date.now()+Math.random(),...t}]}));}
+  copy(text){try{navigator.clipboard&&navigator.clipboard.writeText(text);}catch(e){}this.toast({kicker:'Schránka',title:'Odkaz zkopírován',glyph:'📋'});}
+  finishOb(name,kg,sex){this.setState(s=>({onboarded:true,name:name.trim(),prof:{...s.prof,kg,sex},tab:'count'}));}
+  obFind=()=>{
+    const code=normCode(this.state.ob.code),demo=DEMO_INVITES[code],mine=this.state.invites.find(i=>i.code===code),p=demo||mine;
+    this.setState(s=>({ob:{...s.ob,code,found:p?{name:p.name,kg:p.kg,sex:p.sex}:null,error:p?'':'Takovej kód neznáme. Zkontroluj ho, nebo si založ vlastní účet.'}}));
+  };
+  obClaim=()=>{const f=this.state.ob.found;if(!f)return;this.setState(s=>({invites:s.invites.map(i=>i.name===f.name?{...i,claimed:true}:i)}));this.finishOb(f.name,f.kg,f.sex);};
+  createPub=()=>{
+    const ps=this.state.ps,name=(ps.name||'').trim();if(!name)return;
+    const pub={id:'pub'+Date.now(),name,emoji:ps.emoji||'🏚️',code:genCode(name),owner:true,members:[]};
+    this.setState(s=>({pubs:[...s.pubs,pub],pub:pub.id,ps:{...ps,mode:'detail',pubId:pub.id}}));
+  };
+  joinPub=()=>{
+    const ps=this.state.ps,code=normCode(ps.code);
+    if(this.state.pubs.some(p=>p.code===code)){this.setState({ps:{...ps,error:'V týhle putyce už sedíš.'}});return;}
+    const j=JOINABLE[code];if(!j){this.setState({ps:{...ps,error:'Takovou putyku neznáme. Zkontroluj kód.'}});return;}
+    const pub={...j,code};this.setState(s=>({pubs:[...s.pubs,pub],pub:pub.id,ps:{...ps,mode:'detail',pubId:pub.id,error:''}}));
+    this.toast({kicker:'Vítej',title:`Jsi v putyce ${pub.name}`,glyph:pub.emoji});
+  };
+  leavePub=()=>{const id=this.state.ps.pubId;this.setState(s=>({pubs:s.pubs.filter(p=>p.id!==id),pub:s.pub===id?'main':s.pub,ps:null}));};
+  createInvite=()=>{
+    const ps=this.state.ps,inv=ps.inv,name=(inv.name||'').trim();if(!name)return;
+    const rec={name,kg:kgOf(inv),sex:inv.sex,code:genCode(name),claimed:false,ts:Date.now()};
+    this.setState(s=>({invites:[...s.invites,rec],ps:{...ps,mode:'inviteDone',done:rec}}));
+  };
+  componentDidMount(){this.clock=setInterval(()=>this.setState({now:Date.now()}),1000);this.schedule();}
+  componentWillUnmount(){clearInterval(this.clock);clearTimeout(this.sim);clearTimeout(this.toastT);}
+  componentDidUpdate(pp){
+    if(pp.theme!==this.props.theme&&this.props.theme)this.setState({theme:this.props.theme});
+    const {drinks,others,name,theme,prof,def,onboarded,account,pubs,invites,sessionEnd,sessionBy,sessionClosed,sessionScope,adminPass}=this.state;
+    try{localStorage.setItem(KEY,JSON.stringify({drinks,others,name,theme,prof,def,onboarded,account,pubs,invites,sessionEnd,sessionBy,sessionClosed,sessionScope,adminPass,day:sod(Date.now())}));}catch(e){}
+    if(this.state.toasts.length&&!this.toastT){
+      this.toastT=setTimeout(()=>{this.toastT=null;this.setState(s=>({toasts:s.toasts.slice(1)}));},2800);
+    }
+  }
+  stats(drinks){
+    const t=sod(Date.now()),days={},types=new Set();let totalBeers=BASE.beers,liters=BASE.liters,xp=BASE.xp,owl=false;
+    const cut=this.sessionOver()?this.state.sessionEnd:0;
+    drinks.forEach(d=>{const i=info(d);if(!i)return;const k=sod(d.ts);
+      if(k===t&&d.ts<=cut){totalBeers+=i.beer;liters+=i.beer?i.ml/1000:0;xp+=i.xp;types.add(i.key);return;}
+      const o=days[k]||(days[k]={beers:0,nealko:0,alco:0,all:0,liters:0,xp:0});
+      o.beers+=i.beer;o.nealko+=i.cat==='nealko'?1:0;o.alco+=i.alco?1:0;o.all++;o.liters+=i.beer?i.ml/1000:0;o.xp+=i.xp;
+      totalBeers+=i.beer;liters+=i.beer?i.ml/1000:0;xp+=i.xp;types.add(i.key);if(i.alco&&new Date(d.ts).getHours()<4)owl=true;});
+    const today=days[t]||{beers:0,nealko:0,alco:0,all:0,liters:0,xp:0};
+    let week=0,k=t;const chart=[];
+    for(let i=0;i<7;i++){const v=(days[k]||{}).beers||0;chart.unshift({k,v});week+=v;k=prevDay(k);}
+    let streak=0;k=t;if(!days[k])k=prevDay(k);while(days[k]&&days[k].all){streak++;k=prevDay(k);}
+    const vals=Object.values(days);
+    const s={totalBeers,liters,owl,distinct:types.size,today,week,streak,chart,
+      maxDayBeers:Math.max(0,...vals.map(v=>v.beers)),maxDayNealko:Math.max(0,...vals.map(v=>v.nealko))};
+    s.badges=BADGES.map(b=>{const [c,g]=b.f(s);return {...b,cur:Math.min(c,g),goal:g,done:c>=g};});
+    s.badgeCount=s.badges.filter(b=>b.done).length;
+    s.waterGoal=Math.max(1,Math.floor(today.beers/3));
+    s.ch1=week>=15;s.ch2=today.beers>=3&&today.nealko>=s.waterGoal;
+    xp+=s.badgeCount*50+(s.ch1?150:0)+(s.ch2?60:0);
+    s.xp=xp;s.level=levelOf(xp);s.title=titleOf(s.level);s.lvlStart=50*s.level*(s.level-1);s.lvlNext=50*(s.level+1)*s.level;
+    return s;
+  }
+  board(range,others,s){
+    const me={id:'me',name:this.state.name||'Ty',today:s.today.beers,week:s.week,total:s.totalBeers,me:true};
+    const pub=this.state.pubs.find(p=>p.id===this.state.pub);
+    if(pub)others=others.filter(o=>pub.members.includes(o.id));
+    return [...others,me].sort((a,b)=>b[range]-a[range]||a.name.localeCompare(b.name,'cs'));
+  }
+  rankMap(others,drinks){
+    const r=this.board(this.state.range,others||this.state.others,this.stats(drinks||this.state.drinks));
+    return Object.fromEntries(r.map((p,i)=>[p.id,i]));
+  }
+  moves(before,after){
+    const t=Date.now(),m={};
+    Object.keys(after).forEach(id=>{if(before[id]==null)return;if(after[id]<before[id])m[id]={dir:'up',t};else if(after[id]>before[id])m[id]={dir:'down',t};});
+    return m;
+  }
+  schedule(){const [a,b]=SPEED[this.props.speed]||SPEED['normálně'];this.sim=setTimeout(()=>this.tick(),a+Math.random()*(b-a));}
+  tick(){
+    if(this.props.live===false){this.schedule();return;}
+    const others=this.state.others,i=Math.floor(Math.random()*others.length),p=others[i],shot=Math.random()<0.2;
+    const o=shot?{...p,shots:(p.shots||0)+1,start:p.start||Date.now()}
+      :{...p,today:p.today+1,week:p.week+1,total:p.total+1,start:p.start||Date.now()};
+    const next=others.map((x,j)=>j===i?o:x),before=this.rankMap(),after=this.rankMap(next);
+    const sv=shot?CATS.shot.vars[Math.floor(Math.random()*CATS.shot.vars.length)].name.toLowerCase():'';
+    const items=[{id:'f'+Date.now(),text:shot?`${o.name} kopnul ${sv}`:`${o.name} si dal ${o.today}. pivo`,ts:Date.now()}];
+    if(!shot&&o.today===3)items.unshift({id:'g'+Date.now(),text:`${o.name} získal odznak Hattrick`,ts:Date.now(),accent:true});
+    this.setState(s=>({others:next,flash:{id:o.id,t:Date.now()},moved:{...s.moved,...this.moves(before,after)},feed:[...items,...s.feed].slice(0,6)}));
+    this.schedule();
+  }
+  pickQuote(){let i;do{i=Math.floor(Math.random()*QUOTES.length);}while(QUOTES.length>1&&i===this.lastQ);this.lastQ=i;return {i,key:Date.now()};}
+  add=()=>this.addAt(Date.now(),this.state.def);
+  sessionOver(){const e=this.state.sessionEnd;return !!e&&sod(e)===sod(Date.now());}
+  makeQ(){
+    const r=n=>Math.floor(Math.random()*n);let a,b,op,ans;
+    if(Math.random()<.5){a=2+r(8);b=2+r(8);op='+';ans=a+b;}
+    else{a=5+r(10);b=1+r(a-1);op='−';ans=a-b;}
+    if(Math.random()<.3){a=2+r(4);b=2+r(5);op='×';ans=a*b;}
+    return {text:`${a} ${op} ${b} = ?`,ans};
+  }
+  strokeDown(cat,e){
+    const r=e.currentTarget.getBoundingClientRect();this.drawRect=r;
+    try{e.currentTarget.setPointerCapture(e.pointerId);}catch(x){}
+    this.setState({draw:{cat,pts:[[e.clientX-r.left,e.clientY-r.top]]}});
+  }
+  strokeMove(e){const d=this.state.draw,r=this.drawRect;if(!d||!r)return;const p=[e.clientX-r.left,e.clientY-r.top],l=d.pts[d.pts.length-1];if(Math.hypot(p[0]-l[0],p[1]-l[1])<2)return;this.setState({draw:{...d,pts:[...d.pts,p]}});}
+  strokeUp(e){
+    const d=this.state.draw;if(!d)return;const a=d.pts[0],b=d.pts[d.pts.length-1],len=Math.hypot(b[0]-a[0],b[1]-a[1]);
+    this.setState({draw:null});
+    if(len<22)return;
+    const k=d.cat,def=this.state.def,sel={cat:k,v:def.cat===k?def.v:CATS[k].def,ml:k==='shot'?(def.cat==='shot'&&def.ml)||40:null};
+    this.addAt(Date.now(),sel);
+  }
+  openEnd=()=>this.setState({end:{q:this.makeQ(),answer:'',error:'',tries:0,scope:this.state.pub==='main'?'global':'pub',pass:'',passError:false}});
+  confirmEnd=()=>{
+    const e=this.state.end;if(!e)return;
+    if(e.scope==='global'&&(e.pass||'')!==(this.state.adminPass||ADMIN_PASS_DEFAULT)){
+      this.setState({end:{...e,passError:true,error:'Špatný admin heslo. Hlavní lokál zavírá jen hospodský.'}});return;
+    }
+    if(Number(e.answer)!==e.q.ans){
+      const tries=e.tries+1,msgs=['Hmm, to nesedí. Ještě jednou.','Zkus to jako střízlivej.','Tak to asi ještě nekončíš. Nový příklad.'];
+      this.setState({end:{...e,q:tries>=3?this.makeQ():e.q,answer:'',tries:tries>=3?0:tries,error:msgs[Math.min(tries-1,2)]}});return;
+    }
+    const s=this.stats(this.state.drinks),nm=this.state.name||'Ty',ts=Date.now();
+    const pubObj=this.state.pubs.find(p=>p.id===this.state.pub),global=e.scope==='global'||!pubObj;
+    const inScope=o=>global||pubObj.members.includes(o.id);
+    const where=global?'celej lokál':pubObj.name;
+    this.setState(x=>({sessionEnd:ts,sessionBy:nm,sessionScope:global?'global':pubObj.name,sessionClosed:{beers:s.today.beers,liters:s.today.liters},sessionNote:true,end:null,quote:null,lastAdd:null,forgotOpen:false,sheet:null,
+      others:x.others.map(o=>inScope(o)?{...o,today:0,shots:0,start:null}:o),moved:{},
+      feed:[{id:'e'+ts,text:`${nm} zavřel kolo pro ${where} (${s.today.beers} ${word(s.today.beers)}). Jede se nanovo.`,ts,me:true},...x.feed].slice(0,6)}));
+    this.toast({kicker:'Kolo zavřeno',title:'Nové kolo běží',glyph:'🔄'});
+  };
+  addForgot=()=>{
+    const [h,m]=(this.state.forgotTime||'').split(':').map(Number);if(isNaN(h)||isNaN(m))return;
+    const d=new Date();d.setHours(h,m,0,0);let ts=d.getTime();if(ts>Date.now())ts-=DAY;
+    this.addAt(ts,this.state.def);this.setState({forgotOpen:false});
+  };
+  saveSheet=()=>{
+    const sh=this.state.sheet;if(!sh)return;
+    this.setState({sheet:null,def:{cat:sh.cat,v:sh.v,ml:sh.ml||null},tab:'count'});try{window.scrollTo(0,0);}catch(e){}
+  };
+  addAt=(ts,sel)=>{
+    const before=this.stats(this.state.drinks),rb=this.rankMap();
+    const d={id:Date.now()+Math.random(),cat:sel.cat,v:sel.v,ml:sel.ml||null,ts},inf=info(d);
+    const drinks=[...this.state.drinks,d],after=this.stats(drinks),toasts=[];
+    after.badges.forEach((b,i)=>{if(b.done&&!before.badges[i].done)toasts.push({id:'b'+b.id+d.id,kicker:'Nový odznak · +50 XP',title:b.name,glyph:b.glyph});});
+    if(after.ch1&&!before.ch1)toasts.push({id:'c1'+d.id,kicker:'Výzva splněna · +150 XP',title:'Pivní týden',glyph:'15'});
+    if(after.ch2&&!before.ch2)toasts.push({id:'c2'+d.id,kicker:'Výzva splněna · +60 XP',title:'Pivo a voda',glyph:'H₂O'});
+    if(after.level>before.level)toasts.push({id:'l'+d.id,kicker:'Postup!',title:`Úroveň ${after.level} · ${after.title}`,glyph:String(after.level)});
+    const ra=this.rankMap(null,drinks),nm=this.state.name||'Ty';
+    const text=inf.beer?`${nm} si dává ${after.today.beers}. pivo`:inf.cat==='shot'?`${nm} kopnul ${inf.v.name.toLowerCase()}`:`${nm} · ${inf.name.toLowerCase()}`;
+    this.setState(s=>({drinks,lastAdd:{id:d.id,xp:inf.xp},quote:this.pickQuote(),flash:{id:'me',t:Date.now()},toasts:[...s.toasts,...toasts],
+      moved:{...s.moved,...this.moves(rb,ra)},feed:[{id:'m'+d.id,text,ts:Date.now(),me:true},...s.feed].slice(0,6)}));
+    try{navigator.vibrate&&navigator.vibrate(18);}catch(e){}
+  };
+  rel(ts){const s=Math.round((this.state.now-ts)/1000);if(s<10)return 'teď';if(s<60)return `před ${s} s`;if(s<3600)return `před ${Math.floor(s/60)} min`;return hhmm(ts);}
+
+  renderVals(){
+    const st=this.state,now=Date.now(),s=this.stats(st.drinks),prof=st.prof,B=bacOf(st.drinks,prof,now);
+    const theme=st.theme||this.props.theme||'dark',t0=sod(now),h=React.createElement;
+    const defI=info({cat:st.def.cat,v:st.def.v,ml:st.def.ml});
+    const cut=this.sessionOver()?st.sessionEnd:0;
+    const todayList=st.drinks.filter(d=>d.ts>=t0&&d.ts>cut&&d.ts<=now).map(d=>[d,info(d)]).filter(x=>x[1]).sort((a,b)=>a[0].ts-b[0].ts);
+    const firstA=todayList.find(x=>x[1].alco),perH=firstA?s.today.beers/Math.max((now-firstA[0].ts)/36e5,0.5):0;
+    const cnt={};todayList.forEach(([d,i])=>{if(!i.beer){const k=i.cat;cnt[k]=(cnt[k]||0)+1;}});
+    const otherBits=Object.keys(cnt).map(k=>`${cnt[k]}× ${CATS[k].label.toLowerCase()}`);
+    const myShots=cnt.shot||0;
+    const flashOn=id=>st.flash&&st.flash.id===id&&now-st.flash.t<1300;
+    const mv=(id,dir)=>!!(st.moved[id]&&st.moved[id].dir===dir&&now-st.moved[id].t<4500);
+    const segBg=on=>on?'var(--amber)':'transparent',segFg=on=>on?'var(--on-amber)':'var(--text)';
+    const RANKC=[['#f6c544','#2a1c00'],['#d5dbe2','#1e2530'],['#d98a3a','#2a1400']];
+    const board=this.board(st.range,st.others,s);
+    const rows=board.map((p,i)=>{
+      const rate=p.me?perH:(p.today?p.today/Math.max((now-(p.start||now-36e5))/36e5,0.5):0);
+      const shots=p.me?myShots:(p.shots||0);
+      return {rank:i+1,emoji:p.me?'🍺':p.emoji,name:p.me?`${p.name} (ty)`:p.name,value:p[st.range],
+        bac:n2(p.me?B.bac:otherBac(p,now),2),
+        sub:`${p.today} ${word(p.today)} · ${shots} ${pl(shots,'panák','panáky','panáků')} · ${n2(rate,1)} piv/h`,
+        bg:flashOn(p.id)?'var(--amber-tint)':p.me?'var(--amber-tint)':'var(--card)',
+        border:flashOn(p.id)||p.me?'var(--amber)':'var(--line-soft)',
+        rankBg:i<3?RANKC[i][0]:'var(--card-2)',rankFg:i<3?RANKC[i][1]:'var(--muted)',up:mv(p.id,'up'),down:mv(p.id,'down')};
+    });
+    const myI=board.findIndex(p=>p.me),me=board[myI],rn={today:'dneska',week:'tenhle týden',total:'celkově'}[st.range];
+    let pos;
+    if(myI===0){const lead=me[st.range]-(board[1]?board[1][st.range]:0);pos={lead:'Vedeš! 👑',rest:`Náskok ${lead} ${word(lead)} ${rn}. Nepolevuj.`};}
+    else{const gap=board[myI-1][st.range]-me[st.range]+1;pos={lead:`Jsi ${myI+1}.`,rest:`Na ${board[myI-1].name} ti chybí ${gap} ${word(gap)}. Tak šup!`};}
+    const wk=this.board('week',st.others,s),wi=wk.findIndex(p=>p.me),above=wi>0?wk[wi-1]:null;
+    const pct=(c,g)=>Math.min(100,Math.round(c/g*100))+'%';
+    const t=st.toasts[0];
+    const toastEl=t?h('div',{key:t.id,onClick:()=>{clearTimeout(this.toastT);this.toastT=null;this.setState(x=>({toasts:x.toasts.slice(1)}));},
+      style:{position:'fixed',top:12,left:12,right:12,maxWidth:456,margin:'0 auto',zIndex:60,display:'flex',alignItems:'center',gap:12,padding:'10px 14px 10px 10px',borderRadius:18,background:'var(--card)',border:'1.5px solid var(--amber)',color:'var(--text)',boxShadow:'0 12px 36px rgba(0,0,0,.4)',animation:'pp-toast 380ms cubic-bezier(.2,.9,.3,1.2) both',cursor:'pointer'}},
+      h('div',{style:{width:48,height:48,flex:'none',borderRadius:'50%',display:'grid',placeItems:'center',background:'linear-gradient(180deg,var(--amber-hi),var(--amber-lo))',color:'var(--on-amber)',fontWeight:800,fontSize:16}},t.glyph),
+      h('div',{style:{display:'flex',flexDirection:'column',gap:1}},
+        h('div',{style:{fontSize:11,fontWeight:800,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--amber-text)'}},t.kicker),
+        h('div',{style:{fontWeight:800,fontSize:17}},t.title))):null;
+    const la=st.lastAdd,q=st.quote&&QUOTES[st.quote.i];
+    const over=this.sessionOver();
+    const quoteEl=q?h('div',{key:'q'+st.quote.key,style:{position:'relative',marginBottom:-2,animation:'pp-bubble 420ms cubic-bezier(.2,.9,.3,1.3) both'}},
+      h('span',{style:{position:'absolute',bottom:-7,left:'50%',width:14,height:14,marginLeft:-7,transform:'rotate(45deg)',background:'var(--card)',borderRight:'1.5px solid var(--amber)',borderBottom:'1.5px solid var(--amber)',zIndex:1}}),
+      h('div',{style:{background:'var(--card)',border:'1.5px solid var(--amber)',borderRadius:18,padding:'14px 16px',display:'flex',flexDirection:'column',gap:6}},
+        h('div',{style:{fontWeight:800,fontSize:16,lineHeight:1.35,textWrap:'pretty'}},'„'+q.t+'“'),
+        h('div',{style:{fontSize:13,fontStyle:'italic',color:'var(--amber-text)'}},'— '+q.who+' ('+q.src+')'))):null;
+    const maxV=Math.max(1,...s.chart.map(c=>c.v));
+    const goT=tab=>()=>{this.setState({tab});try{window.scrollTo(0,0);}catch(e){}};
+    const tabC=k=>({color:st.tab===k?'var(--amber-text)':'var(--muted)',bg:st.tab===k?'var(--amber-tint)':'transparent'});
+    const setProf=patch=>this.setState(x=>({prof:{...x.prof,...patch}}));
+    const sh=st.sheet,shC=sh&&CATS[sh.cat];
+    const ob=st.ob,setOb=patch=>this.setState(x=>({ob:{...x.ob,...patch}}));
+    const ps=st.ps||{},setPs=patch=>this.setState(x=>({ps:{...(x.ps||{}),...patch}}));
+    const openPs=mode=>this.setState({ps:{mode,name:'',emoji:'🏚️',code:'',error:'',pubId:null,inv:{name:'',kg:80,sex:'m'},done:null}});
+    const curPubObj=st.pubs.find(p=>p.id===st.pub);
+    const psPubObj=ps.pubId&&st.pubs.find(p=>p.id===ps.pubId);
+    const PS_T={menu:['Putyka','Kde dneska pijeme?'],create:['Nová putyka','Dostaneš kód, kterej pošleš partě.'],join:['Vstoupit do putyky','Zadej kód, co ti poslal kámoš.'],
+      detail:[psPubObj?`${psPubObj.emoji} ${psPubObj.name}`:'','Kdo má kód, může dovnitř.'],invite:['Účet pro kámoše','Vyplň mu to, ať nemusí nic řešit.'],inviteDone:['Pozvánka je hotová','Stačí poslat odkaz.']}[ps.mode]||['',''];
+    const memberOf=id=>st.others.find(o=>o.id===id);
+    const pubSub=p=>{const n=p.members.length+1;return `${n} ${pl(n,'štamgast','štamgasti','štamgastů')} · ${p.owner?'tvoje putyka':'jsi člen'}`;};
+    return {
+      ready:st.onboarded,notReady:!st.onboarded,ob,obIsForm:ob.step==='form',obIsInvite:ob.step==='invite',
+      obName:e=>setOb({name:e.target.value}),obKg:e=>setOb({kg:e.target.value}),obKgDec:()=>setOb({kg:kgOf(ob)-1}),obKgInc:()=>setOb({kg:kgOf(ob)+1}),
+      obSexOpts:[['m','Chlap'],['f','Ženská']].map(([id,label])=>({label,bg:segBg(ob.sex===id),fg:segFg(ob.sex===id),pick:()=>setOb({sex:id})})),
+      obStartOpacity:ob.name.trim()?1:.5,obStart:()=>{if(ob.name.trim())this.finishOb(ob.name,kgOf(ob),ob.sex);},
+      obGoInvite:()=>setOb({step:'invite',error:'',found:null}),obGoForm:()=>setOb({step:'form'}),
+      obCode:e=>setOb({code:e.target.value.toUpperCase(),error:'',found:null}),obFind:this.obFind,obHasError:!!ob.error,obHasFound:!!ob.found,
+      obFound:ob.found?{name:ob.found.name,initials:initials(ob.found.name),sub:`${ob.found.kg} kg · ${ob.found.sex==='f'?'ženská':'chlap'} · účet založil kámoš`}:{},
+      obClaim:this.obClaim,
+      pubChips:[{id:'main',name:'Hlavní lokál',emoji:'🌍'},...st.pubs].map(p=>({name:p.name,emoji:p.emoji,bg:st.pub===p.id?'var(--amber)':'var(--card)',fg:st.pub===p.id?'var(--on-amber)':'var(--text)',border:st.pub===p.id?'var(--amber)':'var(--line-soft)',pick:()=>this.setState({pub:p.id,moved:{}})})),
+      curPub:curPubObj?{name:curPubObj.name,emoji:curPubObj.emoji,sub:pubSub(curPubObj),isRoom:true,code:curPubObj.code}:{name:'Hlavní lokál',emoji:'🌍',sub:'Všichni, co jsou zrovna online. Tady jsi vždycky.',isRoom:false,code:''},
+      openPubMenu:()=>openPs('menu'),openCurPub:()=>{openPs('detail');setPs({pubId:st.pub});},openInvite:()=>openPs('invite'),
+      myPubs:st.pubs.map(p=>({name:p.name,emoji:p.emoji,code:p.code,sub:pubSub(p),open:()=>{openPs('detail');setPs({pubId:p.id});}})),
+      myInvites:st.invites.map(i=>({name:i.name,initials:initials(i.name),sub:`${i.kg} kg · ${i.sex==='f'?'ženská':'chlap'} · ${i.code}`,status:i.claimed?'Převzato ✓':'Čeká',statusColor:i.claimed?'var(--ok)':'var(--amber-text)',
+        open:()=>{openPs('inviteDone');setPs({done:i});}})),
+      noAccount:!st.account,hasAccount:!!st.account,account:st.account||{},
+      loginGoogle:()=>{this.setState({account:{provider:'Google',email:`${slug(st.name).toLowerCase()||'stamgast'}@gmail.com`}});this.toast({kicker:'Účet zamčenej',title:'Čárky jsou v bezpečí',glyph:'🔐'});},
+      loginApple:()=>{this.setState({account:{provider:'Apple',email:`${slug(st.name).toLowerCase()||'stamgast'}@icloud.com`}});this.toast({kicker:'Účet zamčenej',title:'Čárky jsou v bezpečí',glyph:'🔐'});},
+      logout:()=>this.setState({account:null}),
+      psOpen:!!st.ps,closePs:()=>this.setState({ps:null}),ps:{...ps,title:PS_T[0],hint:PS_T[1],inv:ps.inv||{},done:ps.done||{}},
+      psMenu:ps.mode==='menu',psCreate:ps.mode==='create',psJoin:ps.mode==='join',psDetail:ps.mode==='detail'&&!!psPubObj,psInvite:ps.mode==='invite',psInviteDone:ps.mode==='inviteDone',
+      psGoCreate:()=>setPs({mode:'create'}),psGoJoin:()=>setPs({mode:'join'}),
+      psName:e=>setPs({name:e.target.value}),psCode:e=>setPs({code:e.target.value.toUpperCase(),error:''}),psHasError:!!ps.error,
+      psEmojis:PUB_EMOJIS.map(e=>({emoji:e,bg:ps.emoji===e?'var(--amber-tint)':'var(--card)',border:ps.emoji===e?'var(--amber)':'var(--line-soft)',pick:()=>setPs({emoji:e})})),
+      createPub:this.createPub,joinPub:this.joinPub,psLeave:this.leavePub,
+      psPub:psPubObj?{code:psPubObj.code,memberText:`${psPubObj.members.length+1} ${pl(psPubObj.members.length+1,'štamgast','štamgasti','štamgastů')}`,leaveLabel:psPubObj.owner?'Zrušit putyku':'Odejít z putyky',
+        memberList:[{emoji:'🍺',name:`${st.name||'Ty'} (ty)`,sub:psPubObj.owner?'hospodský':''},...psPubObj.members.map(memberOf).filter(Boolean).map(o=>({emoji:o.emoji,name:o.name,sub:`${o.today} ${word(o.today)} dnes`,kickable:!!psPubObj.owner,
+          kick:()=>{this.setState(x=>({pubs:x.pubs.map(p=>p.id===psPubObj.id?{...p,members:p.members.filter(id=>id!==o.id)}:p)}));this.toast({kicker:'Hospodský rozhodl',title:`${o.name} letí z putyky`,glyph:'🚪'});}}))]}:{code:'',memberText:'',leaveLabel:'',memberList:[]},
+      psCopy:()=>this.copy(ps.mode==='inviteDone'?`https://pitpivo.cz/j/${(ps.done||{}).code}`:`https://pitpivo.cz/p/${(psPubObj||{}).code}`),
+      invName:e=>setPs({inv:{...ps.inv,name:e.target.value}}),invKg:e=>setPs({inv:{...ps.inv,kg:e.target.value}}),
+      invSexOpts:[['m','Chlap'],['f','Ženská']].map(([id,label])=>({label,bg:segBg((ps.inv||{}).sex===id),fg:segFg((ps.inv||{}).sex===id),pick:()=>setPs({inv:{...ps.inv,sex:id}})})),
+      invOpacity:(ps.inv&&ps.inv.name||'').trim()?1:.5,createInvite:this.createInvite,
+      theme,isDark:theme==='dark',isLight:theme!=='dark',toggleTheme:()=>this.setState({theme:theme==='dark'?'light':'dark'}),
+      toastEl,stats:s,name:st.name,myInitials:initials(st.name||'Ty'),
+      liveDot:h('span',{style:{width:7,height:7,borderRadius:'50%',background:'var(--ok)',display:'inline-block',animation:'pp-pulse 1.4s ease-in-out infinite'}}),
+      onlineCount:st.others.filter(o=>o.today>0||o.shots>0).length+1,
+      isCount:st.tab==='count',isBoard:st.tab==='board',isGame:st.tab==='game',isProfile:st.tab==='profile',
+      goCount:goT('count'),goBoard:goT('board'),goGame:goT('game'),goProfile:goT('profile'),
+      tabs:{count:tabC('count'),board:tabC('board'),game:tabC('game'),profile:tabC('profile')},
+      ctaSub:`${defI.name} (${vol(defI.ml)} · ${pct1(defI.abv)})`,ctaLabel:CTA[st.def.cat]||CTA.big,ctaIcon:catIcon(st.def.cat,56),add:this.add,quoteEl,
+      xpFloat:la?h('div',{key:'x'+la.id,style:{display:'flex',justifyContent:'center',marginTop:-4,height:34}},
+        h('span',{style:{padding:'6px 14px',borderRadius:99,background:'var(--card)',border:'1.5px solid var(--amber)',fontWeight:800,fontSize:15,color:'var(--amber-text)',animation:'pp-float 1400ms ease-out forwards',pointerEvents:'none'}},'+'+la.xp+' XP')):null,
+      sessionOn:!over,sessionOver:over,sessionNoteOpen:over&&st.sessionNote&&!!st.sessionClosed,sessionBy:st.sessionBy||'někdo z party',hideSessionNote:()=>this.setState({sessionNote:false}),
+      sessionSummary:st.sessionClosed?`Minulé kolo: ${st.sessionClosed.beers} ${word(st.sessionClosed.beers)}, ${n2(st.sessionClosed.liters,1)} l · zavřel ${st.sessionBy||'někdo z party'} v ${st.sessionEnd?hhmm(st.sessionEnd):''}`:'',
+      endOpen:!!st.end,openEnd:this.openEnd,closeEnd:()=>this.setState({end:null}),confirmEnd:this.confirmEnd,
+      endScopeOpts:[['pub',curPubObj?curPubObj.name:'Putyka',curPubObj?'jen naše parta':'nejsi v žádný putyce'],['global','Hlavní lokál','všichni · admin heslo']].map(([id,label,sub])=>{const on=((st.end||{}).scope||'global')===id,dis=id==='pub'&&!curPubObj;
+        return {label,sub,bg:segBg(on),fg:dis?'var(--muted)':segFg(on),pick:()=>{if(!dis)this.setState(x=>({end:{...x.end,scope:id,error:'',passError:false}}));}};}),
+      endIsGlobal:((st.end||{}).scope||'global')==='global',endPass:(st.end||{}).pass||'',onEndPass:e=>this.setState(x=>({end:{...x.end,pass:e.target.value,passError:false,error:''}})),
+      endPassBorder:st.end&&st.end.passError?'var(--danger)':'var(--line)',
+      sessionScopeLabel:st.sessionScope==='global'?'Hlavní lokál':st.sessionScope,
+      adminPass:st.adminPass,onAdminPass:e=>this.setState({adminPass:e.target.value}),
+      endQ:(st.end||{}).q||{text:''},endAnswer:(st.end||{}).answer||'',onEndAnswer:e=>this.setState(x=>({end:{...x.end,answer:e.target.value,error:''}})),
+      endWrong:!!(st.end&&st.end.error),endError:(st.end||{}).error||'',endBorder:st.end&&st.end.error?'var(--danger)':'var(--line)',
+      cats:ORDER.map(k=>({key:k,label:CATS[k].label,sub:CATS[k].sub,icon:catIcon(k,30),
+        bg:st.def.cat===k?'var(--amber-tint)':'var(--card)',border:st.def.cat===k?'var(--amber)':'var(--line-soft)',
+        open:()=>this.setState({sheet:{cat:k,v:st.def.cat===k?st.def.v:CATS[k].def,ml:k==='shot'?((st.def.cat==='shot'&&st.def.ml)||40):null,setDef:false}})})),
+      bigNumber:h('span',{key:'n'+(la?la.id:0),style:{display:'inline-block',fontWeight:800,fontSize:34,lineHeight:1,letterSpacing:'-.02em',transformOrigin:'left bottom',animation:la?'pp-pop 380ms cubic-bezier(.2,.9,.3,1.5)':'none'}},s.today.alco),
+      breakdown:s.today.beers?`${s.today.beers}× pivo (${n2(s.today.liters,1)} l)`:'Zatím ani kapka',
+      otherText:otherBits.join(' · '),hasOther:otherBits.length>0,
+      tempo:{perH:n2(perH,1),perMin:n2(perH/60,2),since:firstA?`Piješ už ${fmtDur(now-firstA[0].ts)}`:'Ještě sis nedal'},
+      bac:{value:n2(B.bac,2),profile:`${kgOf(prof)} kg · ${prof.sex==='f'?'Žena':'Muž'} · ${(MET[prof.met]||MET.normal).label.toLowerCase()}`,
+        sober:B.bac>0?fmtDur(B.soberMs):'Střízlivej',soberAt:B.bac>0?`Cca v ${hhmm(now+B.soberMs)}`:'Čistej jak sklo'},
+      lvl:{pct:pct(s.xp-s.lvlStart,s.lvlNext-s.lvlStart),inLevel:s.xp-s.lvlStart,need:s.lvlNext-s.lvlStart,nextTitle:titleOf(s.level+1)},
+      log:todayList.slice().reverse().map(([d,i])=>({emoji:i.emoji,name:i.name,meta:`${vol(i.ml)} · ${pct1(i.abv)}`,time:hhmm(d.ts),
+        del:()=>this.setState(x=>({drinks:x.drinks.filter(y=>y.id!==d.id)}))})),
+      logCount:todayList.length,logEmpty:!todayList.length,
+      listekOpen:!!st.listek,openListek:()=>this.setState({listek:true}),closeListek:()=>this.setState({listek:false}),
+      listek:ORDER.map(k=>{const c=todayList.filter(x=>x[1].cat===k).length;const groups=[];let r=c,i=0;while(r>0){const g=Math.min(5,r);groups.push({svg:tallySvg(g,k+i)});r-=g;i++;}
+        const dr=st.draw&&st.draw.cat===k?st.draw:null;
+        const stroke=dr&&dr.pts.length>1?h('svg',{style:{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none',overflow:'visible'}},
+          h('path',{d:'M'+dr.pts.map(p=>p[0]+' '+p[1]).join(' L'),fill:'none',stroke:'#1e2a6b',strokeWidth:2.8,strokeLinecap:'round',strokeLinejoin:'round',opacity:.85})):null;
+        return {label:LISTEK_LABEL[k],groups,stroke,bg:dr?'rgba(30,42,107,.05)':'transparent',
+          down:e=>this.strokeDown(k,e),move:e=>this.strokeMove(e),up:e=>this.strokeUp(e),cancel:()=>this.setState({draw:null})};}),
+      listekTotal:todayList.length?`Celkem ${todayList.length} ${pl(todayList.length,'čárka','čárky','čárek')}`:'',
+      forgotOpen:st.forgotOpen,forgotTime:st.forgotTime,forgotBtn:st.forgotOpen?'Zavřít':'+ Zapomenutý pivo',defName:defI.name.toLowerCase(),
+      toggleForgot:()=>this.setState(x=>({forgotOpen:!x.forgotOpen,forgotTime:x.forgotOpen?x.forgotTime:hhmm(Date.now()-30*6e4)})),
+      onForgotTime:e=>this.setState({forgotTime:e.target.value}),addForgot:this.addForgot,
+      ranges:[['today','Dnes'],['week','Týden'],['total','Celkem']].map(([id,label])=>({label,bg:segBg(st.range===id),fg:segFg(st.range===id),pick:()=>this.setState({range:id,moved:{}})})),
+      rows,pos,
+      feed:st.feed.map(f=>({text:f.text,time:this.rel(f.ts),dot:f.accent||f.me?'var(--amber)':'var(--muted)'})),
+      challenges:[
+        {emoji:'🍺',title:'Pivní týden',desc:'15 piv za posledních 7 dní',reward:'+150 XP',pct:pct(s.week,15),status:s.ch1?'Hotovo ✓':`${s.week}/15`},
+        {emoji:'💧',title:'Pivo a voda',desc:'Ke každejm třem dnešním pivům jedno nealko',reward:'+60 XP',
+          pct:pct(Math.min(s.today.beers,3*s.waterGoal)+Math.min(s.today.nealko,s.waterGoal),4*s.waterGoal),
+          status:s.ch2?'Hotovo ✓':`${Math.min(s.today.beers,3*s.waterGoal)}/${3*s.waterGoal} piv · ${Math.min(s.today.nealko,s.waterGoal)}/${s.waterGoal} nealko`},
+        above?{emoji:'🏁',title:`Předběhni: ${above.name}`,desc:'V týdenním žebříčku',reward:'Sláva',pct:pct(s.week,above.week+1),status:`chybí ${above.week-s.week+1}`}
+             :{emoji:'👑',title:'Udrž korunu',desc:'Jsi první v týdenním žebříčku',reward:'Sláva',pct:'100%',status:'1. místo'}],
+      badges:s.badges.map(b=>({...b,circle:b.done?'linear-gradient(180deg,var(--amber-hi),var(--amber-lo))':'var(--card-2)',glyphColor:b.done?'var(--on-amber)':'var(--muted)',
+        border:b.done?'var(--line)':'var(--line-soft)',status:b.done?'Získáno ✓':`${b.cur}/${b.goal}`,statusColor:b.done?'var(--amber-text)':'var(--muted)'})),
+      badgeTotal:BADGES.length,
+      onName:e=>this.setState({name:e.target.value}),
+      profileStats:[{label:'Piv celkem',value:s.totalBeers},{label:'Litrů celkem',value:n2(s.liters,1)},{label:'Celkem XP',value:s.xp.toLocaleString('cs-CZ')},{label:'Odznaky',value:`${s.badgeCount}/${BADGES.length}`}],
+      chart:s.chart.map((c,i)=>({v:c.v,h:c.v?Math.max(6,c.v/maxV*100*0.78)+'%':'4px',color:i===6?'linear-gradient(180deg,var(--amber-hi),var(--amber-lo))':'var(--bar)',
+        label:new Date(c.k).toLocaleDateString('cs-CZ',{weekday:'short'})})),
+      prof,onKg:e=>setProf({kg:e.target.value}),kgDec:()=>setProf({kg:kgOf(prof)-1}),kgInc:()=>setProf({kg:kgOf(prof)+1}),
+      sexOpts:[['m','Chlap'],['f','Ženská']].map(([id,label])=>({label,bg:segBg(prof.sex===id),fg:segFg(prof.sex===id),pick:()=>setProf({sex:id})})),
+      metOpts:Object.keys(MET).map(id=>({label:MET[id].label,sub:`−${n2(MET[id].b,2)} ‰/h`,bg:segBg((prof.met||'normal')===id),fg:segFg((prof.met||'normal')===id),pick:()=>setProf({met:id})})),
+      metDesc:(MET[prof.met]||MET.normal).desc,
+      themeOpts:[['dark','Tmavý'],['light','Světlý']].map(([id,label])=>({label,bg:segBg(theme===id),fg:segFg(theme===id),pick:()=>this.setState({theme:id})})),
+      reset:()=>this.setState({drinks:seedDrinks(),others:seedOthers(),feed:seedFeed(),moved:{},lastAdd:null,toasts:[],quote:null,def:{cat:'big',v:'12'},
+        onboarded:false,name:'',account:null,sessionEnd:null,sessionBy:'',sessionClosed:null,sessionScope:'global',sessionNote:false,end:null,adminPass:ADMIN_PASS_DEFAULT,pubs:seedPubs(),pub:'main',invites:[],ps:null,sheet:null,ob:{step:'form',name:'',kg:80,sex:'m',code:'',found:null,error:''}}),
+      sheetOpen:!!sh,closeSheet:()=>this.setState({sheet:null}),stop:e=>e.stopPropagation(),
+      sh:shC?{title:shC.title,hint:shC.hint,cta:shC.cta}:{title:'',hint:'',cta:''},
+      hasSizes:!!(shC&&shC.sizes),
+      sizeOpts:[[20,'Malej · 2 cl'],[40,'Velkej · 4 cl']].map(([ml,label])=>({label,bg:segBg(sh&&sh.ml===ml),fg:segFg(sh&&sh.ml===ml),pick:()=>this.setState(x=>({sheet:{...x.sheet,ml}}))})),
+      shVars:shC?shC.vars.map(v=>{const on=sh.v===v.id,ml=shC.sizes?sh.ml:(v.ml||shC.ml);
+        return {name:v.name,emoji:v.emoji||shC.emoji,abv:pct0(v.abv),vol:vol(ml),bg:on?'var(--amber-tint)':'var(--card)',border:on?'var(--amber)':'var(--line-soft)',
+          pick:()=>this.setState(x=>({sheet:{...x.sheet,v:v.id}}))};}):[],
+      saveSheet:this.saveSheet,
+    };
+  }
+}
+</script>
+</body>
+</html>
