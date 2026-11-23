@@ -3,6 +3,7 @@ import { useStore } from '../state/store';
 import { MET } from '../lib/catalog';
 import { BADGES } from '../lib/catalog';
 import { initials, n2, pl } from '../lib/format';
+import { isOffensive, OFFENSIVE_MSG } from '../lib/profanity';
 import { S, Segment, Spinner, Stepper } from '../components/ui';
 
 const GoogleLogo = () => (
@@ -21,7 +22,10 @@ export function Profile() {
   const [kg, setKg] = useState<number | string>(prof.kg);
   useEffect(() => { setName(profile?.name || ''); }, [profile?.name]);
   useEffect(() => { setKg(prof.kg); }, [prof.kg]);
-  const commitName = () => { if (name.trim() && name.trim() !== profile?.name) st.setProfile({ name }); else setName(profile?.name || ''); };
+  const commitName = () => {
+    if (name.trim() && isOffensive(name)) { st.toast({ kicker: 'Přezdívka', title: OFFENSIVE_MSG, glyph: '🙊' }); setName(profile?.name || ''); return; }
+    if (name.trim() && name.trim() !== profile?.name) st.setProfile({ name }); else setName(profile?.name || '');
+  };
   const commitKg = (v: number | string) => { setKg(v); const n = Number(v); if (n >= 35 && n <= 250) st.setProfile({ kg: n }); };
   const [busy, setBusy] = useState<'google' | 'apple' | 'delete' | null>(null);
   const [confirmDel, setConfirmDel] = useState(false);

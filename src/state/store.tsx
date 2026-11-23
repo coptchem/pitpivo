@@ -7,6 +7,7 @@ import {
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { auth, db, fns } from '../lib/firebase';
+import { isOffensive, OFFENSIVE_MSG } from '../lib/profanity';
 import { CATS, QUOTES, type CatKey, type Met, type Sex } from '../lib/catalog';
 import { computeStats, dayKey, makeQ, sod, type Drink, type Stats, DAY } from '../lib/calc';
 import type { PubDirEntry, Def, FeedEvent, Invite, InviteFound, Member, PrivateProfile, PublicUser, Pub, Range, Session, Tab, Theme, Toast, UserDoc } from '../lib/types';
@@ -249,6 +250,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const openPs = useCallback((mode: PsMode, patch: Partial<PsState> = {}) => setPs({ mode, name: '', emoji: '🏚️', code: '', error: '', pubId: null, inv: { name: '', kg: 80, sex: 'm' }, done: null, ...patch }), []);
   const createPub = useCallback(async () => {
     if (!ps) return; const name = (ps.name || '').trim(); if (!name || ps.busy) return;
+    if (isOffensive(name)) { setPs(p => p && { ...p, error: 'Tenhle název neprojde. Zkus něco slušnějšího.' }); return; }
     setPs(p => p && { ...p, busy: true });
     try { const r = await call<{ name: string; emoji: string }, { id: string; code: string }>('createPub')({ name, emoji: ps.emoji || '🏚️' }); setPubSel(r.data.id); setPs(p => p && { ...p, mode: 'detail', pubId: r.data.id, busy: false }); }
     catch (e) { console.error(e); setPs(p => p && { ...p, busy: false, error: limited(e) ? 'Na dnešek už jsi založil dost putyk.' : 'Nepovedlo se založit putyku. Zkus to znovu.' }); }
@@ -280,6 +282,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [ps, toast]);
   const createInvite = useCallback(async () => {
     if (!ps) return; const name = (ps.inv.name || '').trim(); if (!name || ps.busy) return;
+    if (isOffensive(name)) { setPs(p => p && { ...p, error: OFFENSIVE_MSG }); return; }
     setPs(p => p && { ...p, busy: true });
     try { const r = await call<{ name: string; kg: number | string; sex: Sex }, Invite>('createInvite')({ name, kg: ps.inv.kg, sex: ps.inv.sex }); setPs(p => p && { ...p, mode: 'inviteDone', done: r.data, busy: false }); }
     catch (e) { console.error(e); setPs(p => p && { ...p, busy: false, error: limited(e) ? 'Na dnešek už jsi vytvořil dost pozvánek.' : 'Nepovedlo se vytvořit pozvánku.' }); }

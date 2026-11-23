@@ -1,3 +1,4 @@
+import { isOffensive, OFFENSIVE_MSG } from '../lib/profanity';
 import { useStore } from '../state/store';
 import { kgOf } from '../lib/calc';
 import { initials } from '../lib/format';
@@ -22,10 +23,10 @@ export function Onboarding() {
 
       {ob.step === 'form' && (
         <>
-          <form onSubmit={e => { e.preventDefault(); if (canStart) { setOb({ busy: true }); void finishOb(ob.name, kgOf(ob), ob.sex).finally(() => setOb({ busy: false })); } }}
+          <form onSubmit={e => { e.preventDefault(); if (canStart) { if (isOffensive(ob.name)) { setOb({ error: OFFENSIVE_MSG }); return; } setOb({ busy: true, error: '' }); void finishOb(ob.name, kgOf(ob), ob.sex).finally(() => setOb({ busy: false })); } }}
             style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 22, padding: 18, display: 'flex', flexDirection: 'column', gap: 16 }}>
             <label style={S.label}>Jak ti říkaj u pípy?
-              <input value={ob.name} onChange={e => setOb({ name: e.target.value })} maxLength={24} placeholder="třeba Kopec" autoComplete="nickname" style={S.input} />
+              <input value={ob.name} onChange={e => setOb({ name: e.target.value, error: '' })} maxLength={24} placeholder="třeba Kopec" autoComplete="nickname" style={S.input} />
             </label>
             <div style={S.col(6)}>
               <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--muted)' }}>Váha (kvůli promile)</span>
@@ -35,6 +36,7 @@ export function Onboarding() {
               <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--muted)' }}>Pohlaví</span>
               <Segment value={ob.sex} options={[{ id: 'm', label: 'Chlap' }, { id: 'f', label: 'Ženská' }]} onChange={sex => setOb({ sex })} />
             </div>
+            {ob.step === 'form' && ob.error && <span style={{ fontSize: 13, color: 'var(--danger)', fontWeight: 700 }}>{ob.error}</span>}
             <button type="submit" disabled={!canStart} style={{ ...S.primary, minHeight: 58, borderRadius: 18, fontSize: 20, boxShadow: '0 10px 30px var(--glow)', opacity: ob.name.trim() ? 1 : .5 }}>
               {ob.busy ? <Spinner /> : 'Jdu pít 🍻'}
             </button>

@@ -12,6 +12,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { randomInt, timingSafeEqual } from 'node:crypto';
 import { computeStats, publicStats, type Drink, type Profile } from './shared/calc.js';
 import { CATS, type CatKey } from './shared/catalog.js';
+import { isOffensive } from './shared/profanity.js';
 
 initializeApp();
 setGlobalOptions({ region: 'europe-west3', maxInstances: 10 });
@@ -112,7 +113,8 @@ async function recomputeStats(uid: string) {
     }).filter(d => CATS[d.cat] && d.ts <= now + 60000);
     const stats = publicStats(drinks, cut, prof, now);
     tx.update(userRef, { stats }); // update = celé pole stats se nahradí (žádné staré klíče)
-    return { stats, drinks, cut, name: String(user.data()?.name || 'Někdo') };
+    const raw = String(user.data()?.name || 'Někdo');
+    return { stats, drinks, cut, name: isOffensive(raw) ? 'Někdo' : raw };
   });
 }
 
@@ -130,6 +132,15 @@ export const onDrinkWritten = onDocumentWritten('users/{uid}/drinks/{drinkId}', 
   const today = computeStats(res.drinks, res.cut, Date.now()).today.beers;
   const text = c.beer ? `${res.name} si dává ${today}. pivo` : d.cat === 'shot' ? `${res.name} kopnul ${v.name.toLowerCase()}` : `${res.name} · ${name.toLowerCase()}`;
   await addEvent('main', uid, 'drink', text);
+});
+
+/** Pojistka: přezdívku zapisuje klient, takže ji server zkontroluje i tady (kdyby někdo obešel appku). */
+const SAFE_NAMES = ['Slušňák', 'Abstinent', 'Tichá voda', 'Štamgast', 'Pivař'];
+export const onUserWritten = onDocumentWritten('users/{uid}', async (event) => {
+  const after = event.data?.after; if (!after?.exists) return;
+  const name = String(after.data()?.name || '');
+  if (!name || !isOffensive(name)) return;
+  await after.ref.update({ name: `${pick(SAFE_NAMES)} ${randomInt(10, 99)}` });
 });
 
 /** Veřejný rozcestník putyk (název, ikonka, počet štamgastů) — bez kódu a bez seznamu členů. */
@@ -222,6 +233,7 @@ export const createInvite = onCall(CALL, async (req) => {
   const uid = uidOf(req);
   const name = str(req.data?.name, 24);
   if (!name) throw new HttpsError('invalid-argument', 'Chybí přezdívka.');
+  if (isOffensive(name)) throw new HttpsError('invalid-argument', 'bad-name');
   await rlGuard(uid, 'createInvite', 20, 2000, DAY);
   await rlFail(uid, 'createInvite', DAY);
   const kg = kgOf(req.data?.kg), sex = sexOf(req.data?.sex);
@@ -276,6 +288,7 @@ export const createPub = onCall(CALL, async (req) => {
   const uid = uidOf(req);
   const name = str(req.data?.name, 28);
   if (!name) throw new HttpsError('invalid-argument', 'Chybí název.');
+  if (isOffensive(name)) throw new HttpsError('invalid-argument', 'bad-name');
   await rlGuard(uid, 'createPub', 10, 1000, DAY);
   await rlFail(uid, 'createPub', DAY);
   const emoji = PUB_EMOJIS.includes(req.data?.emoji) ? req.data.emoji : '🏚️';
@@ -366,12 +379,12 @@ interface BotDef {
   mix: Partial<Record<CatKey, number>>; // podíl jiných kategorií než velké pivo
 }
 const BOTS: BotDef[] = [
-  { id: 'bot-karel', name: 'Karel', kg: 95, sex: 'm', met: 'normal', from: 17, to: 23, beers: [4, 8], goOut: 0.6, mix: { shot: 0.1 } },
-  { id: 'bot-anna', name: 'Anna', kg: 62, sex: 'f', met: 'normal', from: 19, to: 25, beers: [2, 5], goOut: 0.45, mix: { wine: 0.35, small: 0.2, nealko: 0.1 } },
-  { id: 'bot-franta', name: 'Franta', kg: 105, sex: 'm', met: 'slow', from: 15, to: 22, beers: [5, 10], goOut: 0.55, mix: { shot: 0.08 } },
-  { id: 'bot-zdena', name: 'Zdena', kg: 70, sex: 'f', met: 'fast', from: 18, to: 23, beers: [2, 4], goOut: 0.4, mix: { small: 0.4, nealko: 0.15 } },
-  { id: 'bot-pepa', name: 'Pepa', kg: 82, sex: 'm', met: 'fast', from: 20, to: 27, beers: [3, 7], goOut: 0.35, mix: { shot: 0.2, small: 0.1 } },
-  { id: 'bot-mirka', name: 'Mirka', kg: 58, sex: 'f', met: 'normal', from: 17, to: 22, beers: [1, 4], goOut: 0.4, mix: { wine: 0.2, small: 0.3, nealko: 0.2 } },
+  { id: 'bot-karel', name: 'Karel', kg: 95, sex: 'm', met: 'normal', from: 17, to: 23, beers: [4, 8], goOut: 0.85, mix: { shot: 0.1 } },
+  { id: 'bot-anna', name: 'Anna', kg: 62, sex: 'f', met: 'normal', from: 19, to: 25, beers: [2, 5], goOut: 0.7, mix: { wine: 0.35, small: 0.2, nealko: 0.1 } },
+  { id: 'bot-franta', name: 'Franta', kg: 105, sex: 'm', met: 'slow', from: 15, to: 22, beers: [5, 10], goOut: 0.8, mix: { shot: 0.08 } },
+  { id: 'bot-zdena', name: 'Zdena', kg: 70, sex: 'f', met: 'fast', from: 18, to: 23, beers: [2, 4], goOut: 0.65, mix: { small: 0.4, nealko: 0.15 } },
+  { id: 'bot-pepa', name: 'Pepa', kg: 82, sex: 'm', met: 'fast', from: 20, to: 27, beers: [3, 7], goOut: 0.6, mix: { shot: 0.2, small: 0.1 } },
+  { id: 'bot-mirka', name: 'Mirka', kg: 58, sex: 'f', met: 'normal', from: 17, to: 22, beers: [1, 4], goOut: 0.65, mix: { wine: 0.2, small: 0.3, nealko: 0.2 } },
 ];
 const BOT_VARIANT: Record<CatKey, string[]> = {
   big: ['12', '12', '11', '10'], small: ['12', '11', '10'], wine: ['white', 'red', 'spritz', 'rose'],
@@ -427,7 +440,7 @@ const ARRIVE = [
 
 /**
  * Každých 10 minut: bot se rozhodne podle „povahy“ a dne, jestli dnes jde ven. Pokud ano, přijde v náhodnou
- * dobu ve svém okně, pije svým tempem (rozestupy 18–50 min, občas voda nebo panák), po dosažení dnešního
+ * dobu ve svém okně, pije svým tempem (rozestupy 12–35 min, občas voda nebo panák), po dosažení dnešního
  * počtu piv zaplatí a odejde. Druhý den znova.
  */
 export const botsTick = onSchedule({ schedule: 'every 10 minutes', timeZone: TZ, maxInstances: 1 }, async () => {
@@ -440,7 +453,7 @@ export const botsTick = onSchedule({ schedule: 'every 10 minutes', timeZone: TZ,
     if (h < b.from || h >= b.to) continue;
     const evening = dayKey(h >= 24 ? now - DAY : now);
     if (seeded(evening + b.id) > Math.min(0.95, b.goOut + (weekend ? 0.25 : 0))) continue; // dnes nedorazil
-    const arriveAt = b.from + seeded(evening + b.id + 'a') * (b.to - b.from) * 0.45;      // kdy přijde
+    const arriveAt = b.from + seeded(evening + b.id + 'a') * (b.to - b.from) * 0.25;      // kdy přijde
     if (h < arriveAt) continue;
     const target = Math.round(b.beers[0] + seeded(evening + b.id + 'n') * (b.beers[1] - b.beers[0]) + (weekend ? 1 : 0));
 
@@ -457,7 +470,7 @@ export const botsTick = onSchedule({ schedule: 'every 10 minutes', timeZone: TZ,
       continue;
     }
     const last = tonight.reduce((m, x) => Math.max(m, Number(x.ts) || 0), 0);
-    const gapMin = 18 + seeded(evening + b.id + tonight.length) * 32;     // tempo: 18–50 min mezi drinky
+    const gapMin = 12 + seeded(evening + b.id + tonight.length) * 23;     // tempo: 12–35 min mezi drinky
     if (last && now - last < gapMin * 60000) continue;
     if (!tonight.length && st.evening !== evening) {
       await stateRef.set({ evening, left: false });
