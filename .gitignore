@@ -26,3 +26,5 @@ ftp.txt
 
 # temporary admin helper scripts
 functions/scripts/_*.mjs
+# public certificate of the hosting FTP server (pinned in CI) is safe to commit
+!.github/ftp-server-cert.pem
