@@ -9,7 +9,7 @@ const RANKC: [string, string][] = [['#f6c544', '#2a1c00'], ['#d5dbe2', '#1e2530'
 
 export function Board() {
   const st = useStore();
-  const { members, uid, profile, stats, drinks, cut, now, pubs, pubSel, setPubSel, range, setRange, events, moved, setMoved, flash } = st;
+  const { members, uid, profile, stats, drinks, cut, now, pubs, pubDir, pubSel, setPubSel, range, setRange, events, moved, setMoved, flash } = st;
   const pub = pubSel === 'main' ? null : pubs.find(p => p.id === pubSel) || null;
   const prof = { kg: profile?.kg ?? 80, sex: profile?.sex ?? 'm', met: profile?.met ?? 'normal' } as const;
   const todayList = todayDrinks(drinks, cut, now);
@@ -67,6 +67,12 @@ export function Board() {
             <button key={p.id} type="button" onClick={() => setPubSel(p.id)} style={{ flex: 'none', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, padding: '0 14px', borderRadius: 99, font: 'inherit', fontWeight: 800, fontSize: 14, cursor: 'pointer', whiteSpace: 'nowrap', background: on ? 'var(--amber)' : 'var(--card)', color: on ? 'var(--on-amber)' : 'var(--text)', border: `1.5px solid ${on ? 'var(--amber)' : 'var(--line-soft)'}` }}>{p.emoji} {p.name}</button>
           );
         })}
+        {pubDir.filter(d => !pubs.some(p => p.id === d.id)).map(d => (
+          <button key={d.id} type="button" onClick={() => st.openPs('join', { name: d.name, emoji: d.emoji })} title="Vstup na kód"
+            style={{ flex: 'none', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, padding: '0 14px', borderRadius: 99, font: 'inherit', fontWeight: 800, fontSize: 14, cursor: 'pointer', whiteSpace: 'nowrap', background: 'var(--card-2)', color: 'var(--muted)', border: '1.5px solid var(--line-soft)' }}>
+            {d.emoji} {d.name} <span aria-hidden="true" style={{ fontSize: 12 }}>🔒</span>
+          </button>
+        ))}
         <button type="button" onClick={() => st.openPs('menu')} style={{ flex: 'none', minHeight: 40, padding: '0 14px', borderRadius: 99, font: 'inherit', fontWeight: 800, fontSize: 14, cursor: 'pointer', whiteSpace: 'nowrap', background: 'transparent', color: 'var(--amber-text)', border: '1.5px dashed var(--amber)' }}>+ Putyka</button>
       </div>
       {pub && (

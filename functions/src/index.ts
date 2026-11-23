@@ -132,6 +132,15 @@ export const onDrinkWritten = onDocumentWritten('users/{uid}/drinks/{drinkId}', 
   await addEvent('main', uid, 'drink', text);
 });
 
+/** Veřejný rozcestník putyk (název, ikonka, počet štamgastů) — bez kódu a bez seznamu členů. */
+const dirEntry = (p: FirebaseFirestore.DocumentData) => ({ name: p.name, emoji: p.emoji, members: (p.memberIds || []).length, bot: String(p.ownerId || '').startsWith('bot-'), createdAt: p.createdAt || Date.now() });
+export const onPubWritten = onDocumentWritten('pubs/{pubId}', async (event) => {
+  const id = event.params.pubId; if (id === 'main') return;
+  const after = event.data?.after;
+  if (!after?.exists) { await db.doc(`pubDirectory/${id}`).delete(); return; }
+  await db.doc(`pubDirectory/${id}`).set(dirEntry(after.data()!));
+});
+
 export const onPrivateProfileWritten = onDocumentWritten('users/{uid}/private/{docId}', async (event) => {
   await recomputeStats(event.params.uid);
 });
@@ -401,6 +410,7 @@ async function ensureBotPub() {
   } else {
     const missing = ids.filter(id => !(snap.data()!.memberIds || []).includes(id));
     if (missing.length) await ref.update({ memberIds: FieldValue.arrayUnion(...missing) });
+    if (!(await db.doc(`pubDirectory/${BOT_PUB.id}`).get()).exists) await db.doc(`pubDirectory/${BOT_PUB.id}`).set(dirEntry(snap.data()!));
   }
 }
 

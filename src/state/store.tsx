@@ -9,7 +9,7 @@ import { httpsCallable } from 'firebase/functions';
 import { auth, db, fns } from '../lib/firebase';
 import { CATS, QUOTES, type CatKey, type Met, type Sex } from '../lib/catalog';
 import { computeStats, dayKey, makeQ, sod, type Drink, type Stats, DAY } from '../lib/calc';
-import type { Def, FeedEvent, Invite, InviteFound, Member, PrivateProfile, PublicUser, Pub, Range, Session, Tab, Theme, Toast, UserDoc } from '../lib/types';
+import type { PubDirEntry, Def, FeedEvent, Invite, InviteFound, Member, PrivateProfile, PublicUser, Pub, Range, Session, Tab, Theme, Toast, UserDoc } from '../lib/types';
 
 const LS_THEME = 'pitpivo-theme', LS_DEF = 'pitpivo-def';
 
@@ -22,7 +22,7 @@ export interface ObState { step: 'form' | 'invite'; name: string; kg: number | s
 export interface Store {
   // auth / data
   authUser: User | null; uid: string | null; authReady: boolean; profile: UserDoc | null; profileLoaded: boolean;
-  drinks: Drink[]; pubs: Pub[]; mainSession: Session | null; members: Member[]; events: FeedEvent[]; invites: Invite[];
+  drinks: Drink[]; pubs: Pub[]; pubDir: PubDirEntry[]; mainSession: Session | null; members: Member[]; events: FeedEvent[]; invites: Invite[];
   now: number; cut: number; activeSession: Session | null; sessionOver: boolean; stats: Stats;
   // ui
   theme: Theme; setTheme: (t: Theme) => void; tab: Tab; goTab: (t: Tab) => void; def: Def; setDef: (d: Def) => void;
@@ -70,6 +70,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [drinks, setDrinks] = useState<Drink[]>([]);
   const [pubs, setPubs] = useState<Pub[]>([]);
+  const [pubDir, setPubDir] = useState<PubDirEntry[]>([]);
   const [mainSession, setMainSession] = useState<Session | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [evAll, setEvAll] = useState<FeedEvent[]>([]);
@@ -138,9 +139,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const u3 = onSnapshot(collection(db, 'users'), s => setMembers(s.docs.map(d => ({ uid: d.id, ...(d.data() as UserDoc) }))), e => console.error(e));
     const evMap = (s: { docs: { id: string; data: () => unknown }[] }) => s.docs.map(d => ({ id: d.id, ...(d.data() as Omit<FeedEvent, 'id'>) }));
     const u4 = onSnapshot(query(collection(db, 'events'), where('aud', '==', 'all'), orderBy('ts', 'desc'), limit(40)), s => setEvAll(evMap(s)), e => console.error(e));
+    const u7 = onSnapshot(collection(db, 'pubDirectory'), s => setPubDir(s.docs.map(d => ({ id: d.id, ...(d.data() as Omit<PubDirEntry, 'id'>) })).sort((a, b) => b.members - a.members || a.name.localeCompare(b.name, 'cs'))), e => console.error(e));
     const u6 = onSnapshot(query(collection(db, 'events'), where('members', 'array-contains', uid), orderBy('ts', 'desc'), limit(20)), s => setEvMine(evMap(s)), e => console.error(e));
     const u5 = onSnapshot(query(collection(db, 'invites'), where('createdBy', '==', uid)), s => setInvites(s.docs.map(d => ({ code: d.id, ...(d.data() as Omit<Invite, 'code'>) })).sort((a, b) => a.createdAt - b.createdAt)), e => console.error(e));
-    return () => { u1(); u2(); u3(); u4(); u5(); u6(); };
+    return () => { u1(); u2(); u3(); u4(); u5(); u6(); u7(); };
   }, [uid, onboarded]);
 
   // ── kolo: platí globální session + session každé mé putyky, pokud byla zavřena dnes
@@ -335,7 +337,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [resetLocal]);
 
   const value: Store = {
-    authUser, uid, authReady, profile, profileLoaded, drinks, pubs, mainSession, members, events, invites, now, cut, activeSession, sessionOver, stats,
+    authUser, uid, authReady, profile, profileLoaded, drinks, pubs, pubDir, mainSession, members, events, invites, now, cut, activeSession, sessionOver, stats,
     theme, setTheme, tab, goTab, def, setDef, pubSel, setPubSel: (id) => { setPubSel(id); setMoved({}); }, range, setRange,
     toasts, toast, popToast, quote, lastAdd, sheet, setSheet, saveSheet, ps, setPs, openPs, end, setEnd, openEnd, confirmEnd, listek, setListek,
     forgotOpen, setForgotOpen: (b) => { setForgotOpen(b); if (b) setForgotTime(hhmm(Date.now() - 30 * 6e4)); }, forgotTime, setForgotTime, addForgot,

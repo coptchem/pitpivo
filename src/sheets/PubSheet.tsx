@@ -14,6 +14,7 @@ export function PubSheet() {
     menu: ['Putyka', 'Kde dneska pijeme?'], create: ['Nová putyka', 'Dostaneš kód, kterej pošleš partě.'], join: ['Vstoupit do putyky', 'Zadej kód, co ti poslal kámoš.'],
     detail: [pub ? `${pub.emoji} ${pub.name}` : '', 'Kdo má kód, může dovnitř.'], invite: ['Účet pro kámoše', 'Vyplň mu to, ať nemusí nic řešit.'], inviteDone: ['Pozvánka je hotová', 'Stačí poslat odkaz.'],
   };
+  if (ps.mode === 'join' && ps.name) T.join = [`Vstoupit do ${ps.emoji} ${ps.name}`, 'Zadej kód, co ti poslal hospodský nebo někdo z party.'];
   const [title, hint] = T[ps.mode] || ['', ''];
   const close = () => setPs(null);
   const tk = dayKey(now);

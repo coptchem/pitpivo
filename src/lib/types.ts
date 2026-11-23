@@ -11,6 +11,7 @@ export interface Member extends PublicUser { uid: string }
 export interface Session {
   end: number; by: string; byName: string; scope: 'global' | 'pub'; pubId: string; pubName: string; closed: { beers: number; liters: number };
 }
+export interface PubDirEntry { id: string; name: string; emoji: string; members: number; bot?: boolean }
 export interface Pub { id: string; name: string; emoji: string; code: string; ownerId: string; memberIds: string[]; session?: Session | null }
 export interface Invite { code: string; name: string; kg: number; sex: Sex; createdBy: string; claimedBy?: string | null; createdAt: number }
 export interface InviteFound { name: string; kg: number; sex: Sex }

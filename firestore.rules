@@ -54,6 +54,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Veřejný rozcestník putyk (jen název, ikonka, počet lidí). Píše ho Cloud Function, kód do putyky tu není.
+    match /pubDirectory/{pubId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     // Pozvánky: zakládá, hledá a přebírá jen Cloud Function (s limitem pokusů). Autor vidí seznam svých pozvánek.
     match /invites/{code} {
       allow get: if false;
