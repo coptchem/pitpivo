@@ -74,8 +74,8 @@ jobs:
           # Safety: target folder must already contain the site (index.html + .htaccess); never upload elsewhere.
           cls -1 ${FTP_SERVER_DIR}index.html
           cls -1 ${FTP_SERVER_DIR}.htaccess
-          mirror --reverse --verbose=1 --parallel=4 --no-perms --only-newer --ignore-time ./dist/ $FTP_SERVER_DIR
-          put -O $FTP_SERVER_DIR ./dist/index.html
+          mirror --reverse --verbose=1 --parallel=4 --no-perms ./dist/ $FTP_SERVER_DIR
+          put -O $FTP_SERVER_DIR ./dist/sw.js ./dist/index.html
           quit
           EOF
           lftp -f "$RUNNER_TEMP/lftp.cmd"
