@@ -392,28 +392,73 @@ async function ensureBot(b: BotDef) {
   await batch.commit();
 }
 
+const BOT_PUB = { id: 'u-ajtaka', name: 'U Ajtaka', emoji: '🤖', owner: 'bot-franta' };
+async function ensureBotPub() {
+  const ref = db.doc(`pubs/${BOT_PUB.id}`), snap = await ref.get();
+  const ids = BOTS.map(b => b.id);
+  if (!snap.exists) {
+    await ref.set({ name: BOT_PUB.name, emoji: BOT_PUB.emoji, code: await uniquePubCode('AJTAK'), ownerId: BOT_PUB.owner, memberIds: ids, createdAt: Date.now(), session: null });
+  } else {
+    const missing = ids.filter(id => !(snap.data()!.memberIds || []).includes(id));
+    if (missing.length) await ref.update({ memberIds: FieldValue.arrayUnion(...missing) });
+  }
+}
+
+const LEAVE = [
+  (n: string, k: number) => `${n} platí a jde domů (${k} ${word(k)}). Dobrou!`,
+  (n: string, k: number) => `${n} to dneska balí po ${k}. pivu.`,
+  (n: string, k: number) => `${n}: „Tak já du, zejtra zas.“ (${k} ${word(k)})`,
+];
+const ARRIVE = [
+  (n: string, f: boolean) => `${n} ${f ? 'dorazila' : 'dorazil'} do lokálu.`,
+  (n: string, _f: boolean) => `${n} si přisedá ke štamgastům.`,
+  (n: string, _f: boolean) => `${n} je tu. Pípa, připrav se.`,
+];
+
+/**
+ * Každých 10 minut: bot se rozhodne podle „povahy“ a dne, jestli dnes jde ven. Pokud ano, přijde v náhodnou
+ * dobu ve svém okně, pije svým tempem (rozestupy 18–50 min, občas voda nebo panák), po dosažení dnešního
+ * počtu piv zaplatí a odejde. Druhý den znova.
+ */
 export const botsTick = onSchedule({ schedule: 'every 10 minutes', timeZone: TZ, maxInstances: 1 }, async () => {
   const now = Date.now(), d = new Date(now);
   const hour = d.getHours() + d.getMinutes() / 60, weekend = [0, 5, 6].includes(d.getDay());
+  await ensureBotPub();
   for (const b of BOTS) {
     await ensureBot(b);
-    // Večer přes půlnoc patří ke dni, kdy začal.
-    const h = hour < b.from && hour + 24 < b.to ? hour + 24 : hour;
+    const h = hour < b.from && hour + 24 < b.to ? hour + 24 : hour;      // večer přes půlnoc patří ke dni, kdy začal
     if (h < b.from || h >= b.to) continue;
     const evening = dayKey(h >= 24 ? now - DAY : now);
     if (seeded(evening + b.id) > Math.min(0.95, b.goOut + (weekend ? 0.25 : 0))) continue; // dnes nedorazil
-    const target = Math.round(b.beers[0] + seeded(evening + b.id + 'n') * (b.beers[1] - b.beers[0]));
+    const arriveAt = b.from + seeded(evening + b.id + 'a') * (b.to - b.from) * 0.45;      // kdy přijde
+    if (h < arriveAt) continue;
+    const target = Math.round(b.beers[0] + seeded(evening + b.id + 'n') * (b.beers[1] - b.beers[0]) + (weekend ? 1 : 0));
+
+    const stateRef = db.doc(`botstate/${b.id}`);
+    const st = (await stateRef.get()).data() || {};
+    if (st.evening === evening && st.left) continue;                        // už odešel domů
     const since = now - (h - b.from) * HOUR - 60000;
-    const tonight = (await db.collection(`users/${b.id}/drinks`).where('ts', '>=', since).get()).size;
-    if (tonight >= target) continue;
-    const slotsLeft = Math.max(1, (b.to - h) * 6);
-    if (Math.random() > Math.min(0.9, (target - tonight) / slotsLeft * 1.3)) continue;
+    const tonight = (await db.collection(`users/${b.id}/drinks`).where('ts', '>=', since).get()).docs.map(x => x.data());
+    const beersTonight = tonight.filter(x => CATS[x.cat as CatKey]?.beer).length;
+
+    if (beersTonight >= target || h >= b.to - 0.2) {                       // dost, nebo zavíračka
+      await stateRef.set({ evening, left: true });
+      if (tonight.length) await addEvent('main', b.id, 'leave', pick(LEAVE)(b.name, beersTonight));
+      continue;
+    }
+    const last = tonight.reduce((m, x) => Math.max(m, Number(x.ts) || 0), 0);
+    const gapMin = 18 + seeded(evening + b.id + tonight.length) * 32;     // tempo: 18–50 min mezi drinky
+    if (last && now - last < gapMin * 60000) continue;
+    if (!tonight.length && st.evening !== evening) {
+      await stateRef.set({ evening, left: false });
+      await addEvent('main', b.id, 'arrive', pick(ARRIVE)(b.name, b.sex === 'f'));
+    }
     let cat: CatKey = 'big';
     const r = Math.random(); let acc = 0;
     for (const [k, p] of Object.entries(b.mix) as [CatKey, number][]) { acc += p; if (r < acc) { cat = k; break; } }
     const v = pick(BOT_VARIANT[cat]);
     const ml = cat === 'shot' ? (Math.random() < 0.6 ? 40 : 20) : null;
-    await db.collection(`users/${b.id}/drinks`).add({ cat, v, ml, ts: now - randomInt(9 * 60000) });
+    await db.collection(`users/${b.id}/drinks`).add({ cat, v, ml, ts: now - randomInt(5 * 60000) });
   }
 });
 

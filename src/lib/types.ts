@@ -2,7 +2,7 @@ import type { CatKey, Met, Sex } from './catalog';
 import type { PublicStats } from './calc';
 
 /** Veřejný dokument users/{uid} — čtou ho všichni přihlášení (žebříček). Zapisuje klient jen `name`, `stats` počítá server. */
-export interface PublicUser { name: string; emoji?: string; createdAt?: number; stats?: PublicStats }
+export interface PublicUser { name: string; emoji?: string; createdAt?: number; stats?: PublicStats; bot?: boolean }
 /** Soukromý dokument users/{uid}/private/profile — čte a píše jen majitel. */
 export interface PrivateProfile { kg: number; sex: Sex; met: Met; invitedBy?: string }
 /** Můj profil v klientu = veřejná + soukromá část. */

@@ -88,6 +88,7 @@ export function Board() {
               <span style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 800, fontSize: 15, minWidth: 0 }}>
                   <span>{r.emoji}</span><span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.me ? `${r.name} (ty)` : r.name}</span>
+                  {r.bot && <span title="Bot štamgast" aria-label="bot" style={{ flex: 'none', padding: '1px 6px', borderRadius: 8, background: 'var(--card-2)', color: 'var(--muted)', fontSize: 11, fontWeight: 800 }}>🤖 bot</span>}
                   {mv(r.id, 'up') && <span style={{ color: 'var(--ok)', fontSize: 12 }}>▲</span>}
                   {mv(r.id, 'down') && <span style={{ color: 'var(--danger)', fontSize: 12 }}>▼</span>}
                 </span>
