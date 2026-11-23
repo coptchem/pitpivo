@@ -93,9 +93,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
         run: npx firebase-tools@15.37.0 deploy --only hosting,firestore --project "$FIREBASE_PROJECT" --non-interactive --force
 
-      # Cloud Functions need the Blaze plan and the ADMIN_PASS secret; until then this step fails but the workflow passes.
       - name: Deploy Cloud Functions
-        continue-on-error: true
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
         run: npx firebase-tools@15.37.0 deploy --only functions --project "$FIREBASE_PROJECT" --non-interactive --force
